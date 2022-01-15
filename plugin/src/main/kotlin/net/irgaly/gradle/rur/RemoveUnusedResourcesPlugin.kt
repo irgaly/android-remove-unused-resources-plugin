@@ -1,5 +1,6 @@
 package net.irgaly.gradle.rur
 
+import com.android.build.gradle.BaseExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -16,6 +17,32 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
             task.dryRun.set(extension.dryRun)
             task.lintVariant.set(extension.lintVariant)
             task.lintResultXml.set(extension.lintResultXml)
+        }
+        val lintOptionsOnlyUnusedResources =
+            target.properties.containsKey("rur.lintOptionsOnlyUnusedResources")
+        val overrideLintConfig = target.properties["rur.overrideLintConfig"] as? String
+        val hasOverrideLintOptions =
+            (lintOptionsOnlyUnusedResources or (overrideLintConfig != null))
+        if (hasOverrideLintOptions) {
+            target.afterEvaluate { project ->
+                project.afterEvaluate {
+                    // override lintOptions at most last phase
+                    project.extensions.getByType(BaseExtension::class.java).lintOptions.apply {
+                        xmlReport = true
+                        if (lintOptionsOnlyUnusedResources) {
+                            checkOnly("UnusedResources")
+                            warning("UnusedResources")
+                        }
+                        if (overrideLintConfig != null) {
+                            val file = target.rootProject.file(overrideLintConfig)
+                            if (!file.exists()) {
+                                error("overrideLintConfig file is not exit: $file")
+                            }
+                            lintConfig = file
+                        }
+                    }
+                }
+            }
         }
     }
 }

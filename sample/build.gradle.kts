@@ -27,7 +27,7 @@ removeUnusedResource {
     // simple command from variant:
     //   ./gradlew :sample:removeUnusedResources -Prur.lintVariant="debug"
     // simple command with UnusedResources only lint:
-    // ./gradlew :sample:lintDebug :sample:removeUnusedResources -Prur.lintOptionsOnlyUnusedResources
+    // ./gradlew :sample:lintDebug :sample:removeUnusedResources -Prur.lintOptionsOnlyUnusedResources -Prur.overrideLintConfig="./lint.unusedresources.xml"
 
     // configuration:
     dryRun = true

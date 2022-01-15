@@ -11,7 +11,6 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.w3c.dom.Text
-import java.io.File
 import java.io.StringWriter
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.TransformerFactory.newInstance
@@ -44,7 +43,7 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                 (project.properties["rur.lintVariant"] as? String) ?: lintVariant.orNull ?: ""
             val fileName =
                 "lint-results${if (variant.isEmpty()) "" else "-${variant.capitalize()}"}.xml"
-            lintResultFile = File(project.buildDir, "reports/$fileName")
+            lintResultFile = checkNotNull(project.file("${project.buildDir}/reports/$fileName"))
         }
         logger.debug("lintResultFile = $lintResultFile")
         if (!lintResultFile.exists()) {
@@ -73,7 +72,8 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                 }
                 val (_, resourceName, resourceType, resourceId) = matchedResource.groupValues
                 val location = issue.getElements("location").first()
-                val originalTargetFile = File(location.attributes.getNamedItem("file").nodeValue)
+                val originalTargetFile =
+                    project.file(location.attributes.getNamedItem("file").nodeValue)
                 val resourceDirectory = originalTargetFile.parentFile.parentFile
                 val isValuesResource =
                     Regex("values(-.+)?").matches(originalTargetFile.parentFile.name)
