@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    id("org.sample.plugin")
+    id("net.irgaly.gradle.remove-unused-resources")
 }
 
 android {
@@ -19,6 +19,20 @@ android {
     buildFeatures {
         dataBinding = true
     }
+}
+
+removeUnusedResource {
+    // simple command from xml:
+    //   ./gradlew :sample:removeUnusedResources -Prur.lintResultXml="./sample/build/reports/lint-results-debug.xml"
+    // simple command from variant:
+    //   ./gradlew :sample:removeUnusedResources -Prur.lintVariant="debug"
+    // simple command with UnusedResources only lint:
+    // ./gradlew :sample:lintDebug :sample:removeUnusedResources -Prur.lintOptionsOnlyUnusedResources
+
+    // configuration:
+    dryRun = true
+    lintVariant = "debug"
+    lintResultXml = file("$buildDir/reports/lint-results-debug.xml")
 }
 
 dependencies {

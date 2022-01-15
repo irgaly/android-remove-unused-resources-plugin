@@ -13,8 +13,8 @@ version = "1.0.0-SNAPSHOT"
 gradlePlugin {
     plugins {
         create("plugin") {
-            id = "org.sample.plugin"
-            implementationClass = "org.sample.GreetingPlugin"
+            id = "net.irgaly.gradle.remove-unused-resources"
+            implementationClass = "net.irgaly.gradle.rur.RemoveUnusedResourcesPlugin"
         }
     }
 }
