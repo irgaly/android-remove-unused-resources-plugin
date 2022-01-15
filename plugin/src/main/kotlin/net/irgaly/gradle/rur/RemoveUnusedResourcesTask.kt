@@ -34,7 +34,7 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
     @Suppress("LABEL_NAME_CLASH") // for using: return@forEach
     @TaskAction
     fun run() {
-        val isDryRun = dryRun.getOrElse(false)
+        val isDryRun = project.properties.keys.contains("rur.dryRun") or dryRun.getOrElse(false)
         val dryRunMarker = if (isDryRun) "[dry run] " else ""
         var lintResultFile = (project.properties["rur.lintResultXml"] as? String)?.let {
             project.rootProject.file(it)
