@@ -36,9 +36,12 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
     fun run() {
         val isDryRun = dryRun.getOrElse(false)
         val dryRunMarker = if (isDryRun) "[dry run] " else ""
-        var lintResultFile = lintResultXml.orNull?.asFile
+        var lintResultFile = (project.properties["rur.lintResultXml"] as? String)?.let {
+            project.rootProject.file(it)
+        } ?: lintResultXml.orNull?.asFile
         if (lintResultFile == null) {
-            val variant = lintVariant.getOrElse("")
+            val variant =
+                (project.properties["rur.lintVariant"] as? String) ?: lintVariant.orNull ?: ""
             val fileName =
                 "lint-results${if (variant.isEmpty()) "" else "-${variant.capitalize()}"}.xml"
             lintResultFile = File(project.buildDir, "reports/$fileName")
