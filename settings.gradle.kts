@@ -19,6 +19,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "android-gradle-plugin-skelton"
+rootProject.name = "android-remove-unused-resources-plugin"
 include(":sample")
 includeBuild("plugin")
