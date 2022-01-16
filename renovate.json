@@ -1,5 +1,14 @@
 {
   "extends": [
-    "config:base"
+    "config:base",
+    "schedule:quarterly"
+  ],
+  "packageRules": [
+    {
+      "updateTypes": [
+        "patch"
+      ],
+      "enabled": false
+    }
   ]
 }
