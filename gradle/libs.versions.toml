@@ -3,6 +3,6 @@ kotlin = "1.6.10"
 
 [libraries]
 androidx-core = { module = "androidx.core:core-ktx", version = "1.7.0" }
-androidx-appcompat = { module = "androidx.appcompat:appcompat", version = "1.4.0" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version = "1.4.1" }
 androidx-material = { module = "com.google.android.material:material", version = "1.4.0" }
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version = "2.1.2" }
