@@ -6,17 +6,13 @@ pluginManagement {
     }
     plugins {
         kotlin("jvm").version("1.6.10")
+        id("com.gradle.plugin-publish").version("0.19.0")
     }
 }
 dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-    }
-    versionCatalogs {
-        create("libs") {
-            from(files("../gradle/libs.versions.toml"))
-        }
     }
 }
 rootProject.name = "plugin"
