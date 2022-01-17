@@ -1,13 +1,31 @@
-# Android Gradle Plugin Template
+# Remove Unused Resources Plugin for Android
 
-Template repository for modern Android Gradle Plugin Project.
+A gradle plugin to remove unused android resources by Android Lint results.
 
-* Kotlin 1.6.10
-* Android Gradle Plugin 7.0.1
-  * compileSdk = 31 (Android 12)
-  * minSdk = 26 (Android 8.0)
-* Gradle 7.3.3
-  * Version Catalog
-  * Kotlin DSL (*.kts)
-  * pluginManagement / dependencyResolutionManagement (settings.gradle.kts)
-  * Composite Build
+This provides a gradle task, so it is useful for CI.
+
+# Usage
+
+Apply the plugin to your app module.
+
+`app/build.gradle.kts`
+
+```kotlin
+plugins {
+    id("net.irgaly.remove-unused-resources").version("0.9.0")
+}
+```
+
+Run Android Lint, that contains `UnusedResources` analyser.
+
+```shell
+% ./gradlew :app:lintDebug
+```
+
+Run clean up task.
+
+```shell
+% ./gradlew :app:removeUnusedResources -Prur.lintVariant="Debug"
+```
+
+
