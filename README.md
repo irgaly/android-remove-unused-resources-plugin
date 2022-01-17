@@ -49,16 +49,12 @@ Run Android Lint, that contains `UnusedResources` analyser.
 
 ```shell
 % ./gradlew :app:lintDebug
-
-# if you want to lint for all variant: ./gradlew :app:lint
 ```
 
 Run clean up task, then unused resources are deleted.
 
 ```shell
 % ./gradlew :app:removeUnusedResources -Prur.lintVariant="debug"
-
-# if you want to remove unused resources for all variant: ./gradlew :app:removeUnusedResources
 ```
 
 console outputs like:
