@@ -11,6 +11,10 @@ This is useful for CI because that is provided by gradle task.
 * This plugin provides gradle task.
   * It is suitable to run in CI action.
   * It is equivalent to Android Studio's `Refactor > Remove Unused Resources...` action.
+* Support all Android's resource type and alternative resources detection.
+  * all resources (animator, anim, color...)
+    in https://developer.android.com/guide/topics/resources/providing-resources#ResourceTypes
+  * alternative resources (`-<qualifier>`: ex, drawable-hdpi, values-v26...)
 
 # Usage
 
