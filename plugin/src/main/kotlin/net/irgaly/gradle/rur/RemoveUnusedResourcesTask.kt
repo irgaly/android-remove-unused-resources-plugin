@@ -45,7 +45,7 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                 "lint-results${if (variant.isEmpty()) "" else "-$variant"}.xml"
             lintResultFile = checkNotNull(project.file("${project.buildDir}/reports/$fileName"))
         }
-        logger.debug("lintResultFile = $lintResultFile")
+        logger.info("lintResultFile = $lintResultFile")
         if (!lintResultFile.exists()) {
             throw IllegalArgumentException("lint report file is not exist: $lintResultFile")
         }
@@ -115,10 +115,10 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                                 "override"
                             )?.nodeValue == "true"
                         ) {
-                            logger.info("skip because it has tools:override: $resourceName in $targetFile")
+                            logger.lifecycle("skip because it has tools:override: $resourceName in $targetFile")
                             return@forEach
                         }
-                        logger.info("${dryRunMarker}delete resource element: $resourceName in $targetFile")
+                        logger.lifecycle("${dryRunMarker}delete resource element: $resourceName in $targetFile")
                         val targetIndex = root.childNodes.toSequence().indexOf(target)
                         val beforeText = (root.childNodes.item(targetIndex - 1) as? Text)
                         val afterText = (root.childNodes.item(targetIndex + 1) as? Text)
@@ -139,7 +139,7 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                         root.removeChild(target)
                         if (root.childNodes.toSequence().all { it is Text }) {
                             // delete empty resource file
-                            logger.info("${dryRunMarker}delete resource file because of empty: $targetFile")
+                            logger.lifecycle("${dryRunMarker}delete resource file because of empty: $targetFile")
                             if (!isDryRun) {
                                 targetFile.delete()
                             }
@@ -180,7 +180,7 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                         if (!targetFile.exists()) {
                             logger.error("target file is not exist: $targetFile")
                         } else {
-                            logger.info("${dryRunMarker}delete resource file: $targetFile")
+                            logger.lifecycle("${dryRunMarker}delete resource file: $targetFile")
                             if (!isDryRun) {
                                 targetFile.delete()
                             }
