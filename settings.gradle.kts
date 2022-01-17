@@ -20,5 +20,5 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "android-remove-unused-resources-plugin"
-include(":sample")
+include(":sample", ":sample:sample-sub")
 includeBuild("plugin")

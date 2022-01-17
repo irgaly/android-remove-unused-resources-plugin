@@ -22,7 +22,9 @@ android {
 }
 
 removeUnusedResource {
+    //dryRun = true
     lintVariant = "debug"
+    //lintResultXml = file("${buildDir}/reports/lint-results-debug.xml")
 }
 
 dependencies {
@@ -30,4 +32,5 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.material)
     implementation(libs.androidx.constraintlayout)
+    implementation(projects.sample.sampleSub)
 }
