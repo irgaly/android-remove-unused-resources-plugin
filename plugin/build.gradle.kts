@@ -13,7 +13,7 @@ dependencies {
     implementation("com.android.tools.build:gradle:7.0.4")
 }
 
-group = "net.irgaly"
+group = "io.github.irgaly"
 version = "0.9.0"
 
 java {
@@ -24,10 +24,10 @@ java {
 gradlePlugin {
     plugins {
         create("plugin") {
-            id = "net.irgaly.remove-unused-resources"
+            id = "io.github.irgaly.remove-unused-resources"
             displayName = "Remove Unused Resources Plugin for Android"
             description = "A plugin removes unused resources discovered by Android Lint"
-            implementationClass = "net.irgaly.gradle.rur.RemoveUnusedResourcesPlugin"
+            implementationClass = "io.github.irgaly.gradle.rur.RemoveUnusedResourcesPlugin"
         }
     }
 }

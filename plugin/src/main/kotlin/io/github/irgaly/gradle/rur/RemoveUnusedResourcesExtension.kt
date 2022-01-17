@@ -1,4 +1,4 @@
-package net.irgaly.gradle.rur
+package io.github.irgaly.gradle.rur
 
 import java.io.File
 

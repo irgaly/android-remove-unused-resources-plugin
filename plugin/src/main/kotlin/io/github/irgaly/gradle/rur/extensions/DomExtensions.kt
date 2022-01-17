@@ -1,4 +1,4 @@
-package net.irgaly.gradle.rur.extensions
+package io.github.irgaly.gradle.rur.extensions
 
 import org.w3c.dom.Element
 import org.w3c.dom.Node

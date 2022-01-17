@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
     kotlin("android")
-    id("net.irgaly.remove-unused-resources")
+    id("io.github.irgaly.remove-unused-resources")
 }
 
 android {

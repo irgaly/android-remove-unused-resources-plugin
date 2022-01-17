@@ -1,8 +1,8 @@
-package net.irgaly.gradle.rur
+package io.github.irgaly.gradle.rur
 
-import net.irgaly.gradle.rur.extensions.getAttributeText
-import net.irgaly.gradle.rur.extensions.getElements
-import net.irgaly.gradle.rur.extensions.toSequence
+import io.github.irgaly.gradle.rur.extensions.getAttributeText
+import io.github.irgaly.gradle.rur.extensions.getElements
+import io.github.irgaly.gradle.rur.extensions.toSequence
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.Property

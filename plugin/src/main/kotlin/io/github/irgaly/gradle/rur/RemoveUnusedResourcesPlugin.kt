@@ -1,4 +1,4 @@
-package net.irgaly.gradle.rur
+package io.github.irgaly.gradle.rur
 
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.Plugin
