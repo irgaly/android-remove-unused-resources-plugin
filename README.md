@@ -1,6 +1,6 @@
 # Remove Unused Resources Plugin for Android
 
-A gradle plugin to remove unused android resources by Android Lint results.
+A gradle plugin to remove unused android resources by Android Lint results xml file.
 
 This provides a gradle task, so it is useful for CI.
 
