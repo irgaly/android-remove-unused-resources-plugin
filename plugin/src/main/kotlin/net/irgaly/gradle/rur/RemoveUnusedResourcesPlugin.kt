@@ -28,8 +28,9 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
                 project.afterEvaluate {
                     // override lintOptions at most last phase
                     project.extensions.getByType(BaseExtension::class.java).lintOptions.apply {
-                        xmlReport = true
                         if (lintOptionsOnlyUnusedResources) {
+                            xmlReport = true
+                            checkOnly.clear()
                             checkOnly("UnusedResources")
                             warning("UnusedResources")
                         }
