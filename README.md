@@ -2,7 +2,7 @@
 
 A gradle plugin to remove unused android resources by Android Lint results xml file.
 
-This provides a gradle task, so it is useful for CI.
+This is useful for CI because that is provided by gradle task.
 
 # Usage
 
@@ -31,12 +31,45 @@ Run clean up task, then unused resources are deleted.
 console outputs like:
 
 ```shell
-> Task :sample:removeUnusedResources
-delete resource file: /src/sample/src/main/res/drawable/usused_drawable.xml
-delete resource element: R.color.usused_color in /src/sample/src/main/res/values/colors.xml
-delete resource element: R.color.usused_color_with_night_theme in /src/sample/src/main/res/values-night/colors.xml
-delete resource file because of empty: /src/sample/src/main/res/values-night/colors.xml
-delete resource element: R.color.usused_color_with_night_theme in /src/sample/src/main/res/values/colors.xml
+> Task :app:removeUnusedResources
+delete resource file: /src/app/src/main/res/drawable/usused_drawable.xml
+delete resource element: R.color.usused_color in /src/app/src/main/res/values/colors.xml
+delete resource element: R.color.usused_color_with_night_theme in /src/app/src/main/res/values-night/colors.xml
+delete resource file because of empty: /src/app/src/main/res/values-night/colors.xml
+delete resource element: R.color.usused_color_with_night_theme in /src/app/src/main/res/values/colors.xml
 ```
 
+## Run lint only for `UnusedResources`
 
+This plugin provides simple utility for lint, that overrides lint options.
+
+For example, this command let lint to check only `UnusedResources` lint.
+
+```shell
+% ./gradlew :app:lintDebug -Prur.lintOptionsOnlyUnusedResources
+```
+
+The `-Prur.lintOptionsOnlyUnusedResources` overrides lint options by below settings.
+
+```kotlin
+lintOptions {
+  xmlReport = true
+  checkOnly.clear()
+  checkOnly("UnusedResources")
+  warning("UnusedResources")
+}
+```
+
+## Recommended CI Usage with one liner
+
+This is recommended one liner for CI.
+
+```shell
+% ./gradlew :app:lintDebug :app:removeUnusedResources -Prur.lintOptionsOnlyUnusedResources -Prur.lintVariant="debug"
+```
+
+This executes below task:
+
+* Run Android Lint with `checkOnly("UnusedResources")`.
+  * report will be saved to `app/build/reports/lint-results-debug.xml`
+* Clean up unused resources by lint result.
