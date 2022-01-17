@@ -28,16 +28,31 @@ plugins {
 }
 ```
 
+Ensure `isCheckDependencies = true`, if a project is multi module project. This option let lint to
+analyze all resources in all module.
+
+`app/build.gradle.kts`
+
+```kotlin
+lintOptions {
+  isCheckDependencies = true
+}
+```
+
 Run Android Lint, that contains `UnusedResources` analyser.
 
 ```shell
 % ./gradlew :app:lintDebug
+
+# if you want to lint for all variant: ./gradlew :app:lint
 ```
 
 Run clean up task, then unused resources are deleted.
 
 ```shell
 % ./gradlew :app:removeUnusedResources -Prur.lintVariant="debug"
+
+# if you want to remove unused resources for all variant: ./gradlew :app:removeUnusedResources
 ```
 
 console outputs like:
@@ -61,13 +76,14 @@ For example, this command let lint to check only `UnusedResources` rule.
 % ./gradlew :app:lintDebug -Prur.lintOptionsOnlyUnusedResources
 ```
 
-The `-Prur.lintOptionsOnlyUnusedResources` overrides lint options by below settings.
+The `-Prur.lintOptionsOnlyUnusedResources` overrides lint options by settings below:
 
 ```kotlin
 lintOptions {
   // These settings are applied automatically by the plugin, when -Prur.lintOptionsOnlyUnusedResources is specified,
   // so you don't have to add these settings in build.gradle.kts.
   xmlReport = true
+  isCheckDependencies = true
   checkOnly.clear()
   checkOnly("UnusedResources")
   warning("UnusedResources")

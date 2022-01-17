@@ -30,6 +30,7 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
                     project.extensions.getByType(BaseExtension::class.java).lintOptions.apply {
                         if (lintOptionsOnlyUnusedResources) {
                             xmlReport = true
+                            isCheckDependencies = true
                             checkOnly.clear()
                             checkOnly("UnusedResources")
                             warning("UnusedResources")
