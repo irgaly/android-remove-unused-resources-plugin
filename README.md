@@ -20,7 +20,6 @@ To be FIX List:
 
 * support ignore resource feature in plugin
   * resource id pattern
-* merged R file
 
 # Usage
 
@@ -34,13 +33,14 @@ plugins {
 }
 ```
 
-Ensure `isCheckDependencies = true`, if a project is multi module project. This option let lint to
-analyze all resources in all module.
+When using AGP 7.0.4 or lower, ensure `isCheckDependencies = true` for multi module project. This
+option let lint to analyze all resources in all module.
 
 `app/build.gradle.kts`
 
 ```kotlin
 lintOptions {
+  // if AGP version is 7.1.0 or higher, isCheckDependencies is default to true
   isCheckDependencies = true
 }
 ```
@@ -173,3 +173,13 @@ removeUnusedResource {
   lintResultXml = file("$buildDir/reports/lint-results-debug.xml")
 }
 ```
+
+# Known Issues
+
+* Android Lint Bug (not this plugin's bug)
+  * When project is multi module project with `android.nonTransitiveRClass=true`, and two module has
+    same resource ID, Android Lint can't find out that resource is not used.
+    * This is reproduced in AGP 7.0.1.
+    * example: moduleA has R.drawable.image (this is used) and moduleB has R.drawable.image (this is
+      not used), Android Lint is not report moduleB's R.drawable.image
+      * related IssueTracker? https://issuetracker.google.com/issues/188871862
