@@ -86,7 +86,7 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                         if (isValuesResource) {
                             it.name.endsWith(".xml")
                         } else {
-                            (it.nameWithoutExtension == resourceId)
+                            (Regex("\\.9$").replace(it.nameWithoutExtension, "") == resourceId)
                         }
                     } ?: emptyList()
                 }.union(listOf(originalTargetFile)).forEach { targetFile ->
