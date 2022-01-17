@@ -22,10 +22,21 @@ Run Android Lint, that contains `UnusedResources` analyser.
 % ./gradlew :app:lintDebug
 ```
 
-Run clean up task.
+Run clean up task, then unused resources are deleted.
 
 ```shell
-% ./gradlew :app:removeUnusedResources -Prur.lintVariant="Debug"
+% ./gradlew :app:removeUnusedResources -Prur.lintVariant="debug"
+```
+
+console outputs like:
+
+```shell
+> Task :sample:removeUnusedResources
+delete resource file: /src/sample/src/main/res/drawable/usused_drawable.xml
+delete resource element: R.color.usused_color in /src/sample/src/main/res/values/colors.xml
+delete resource element: R.color.usused_color_with_night_theme in /src/sample/src/main/res/values-night/colors.xml
+delete resource file because of empty: /src/sample/src/main/res/values-night/colors.xml
+delete resource element: R.color.usused_color_with_night_theme in /src/sample/src/main/res/values/colors.xml
 ```
 
 
