@@ -16,6 +16,12 @@ This is useful for CI because that is provided by gradle task.
     in https://developer.android.com/guide/topics/resources/providing-resources#ResourceTypes
   * alternative resources (`-<qualifier>`: ex, values-night, drawable-hdpi, values-v26...)
 
+To be FIX List:
+
+* support ignore resource feature in plugin
+  * resource id pattern
+* merged R file
+
 # Usage
 
 Apply the plugin to your app module.
