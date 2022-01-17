@@ -42,7 +42,7 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
             val variant =
                 (project.properties["rur.lintVariant"] as? String) ?: lintVariant.orNull ?: ""
             val fileName =
-                "lint-results${if (variant.isEmpty()) "" else "-${variant.capitalize()}"}.xml"
+                "lint-results${if (variant.isEmpty()) "" else "-$variant"}.xml"
             lintResultFile = checkNotNull(project.file("${project.buildDir}/reports/$fileName"))
         }
         logger.debug("lintResultFile = $lintResultFile")
