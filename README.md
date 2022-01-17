@@ -4,6 +4,14 @@ A gradle plugin to remove unused android resources by Android Lint results xml f
 
 This is useful for CI because that is provided by gradle task.
 
+# Concept
+
+* This plugin uses Android Lint results xml file for detect unused resources.
+  * It supports multi module Android project, because of using Android Lint.
+* This plugin provides gradle task.
+  * It is suitable to run in CI action.
+  * It is equivalent to Android Studio's `Refactor > Remove Unused Resources...` action.
+
 # Usage
 
 Apply the plugin to your app module.
@@ -12,7 +20,7 @@ Apply the plugin to your app module.
 
 ```kotlin
 plugins {
-    id("net.irgaly.remove-unused-resources").version("0.9.0")
+  id("net.irgaly.remove-unused-resources").version("0.9.0")
 }
 ```
 
