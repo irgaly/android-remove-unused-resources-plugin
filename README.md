@@ -53,6 +53,8 @@ The `-Prur.lintOptionsOnlyUnusedResources` overrides lint options by below setti
 
 ```kotlin
 lintOptions {
+  // These settings are applied by Plugin automatically, when -Prur.lintOptionsOnlyUnusedResources is specified,
+  // so you don't have to add these settings in build.gradle.kts.
   xmlReport = true
   checkOnly.clear()
   checkOnly("UnusedResources")
