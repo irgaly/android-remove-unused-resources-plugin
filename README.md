@@ -88,6 +88,32 @@ This executes:
   * report will be saved to `app/build/reports/lint-results-debug.xml`
 * Clean up unused resources by lint result (`app/build/reports/lint-results-debug.xml`)
 
+## UnusedResources Ignore rule
+
+This plugin provides ability to specify `lintOptions.lintConfig` from command line options. If you
+want to ignore any resources by lint.config.
+
+The details of lint.config format
+is [here](https://googlesamples.github.io/android-custom-lint-rules/user-guide.html#configuringusinglint.xmlfiles/samplelint.xmlfile)
+.
+
+example `lint.unusedresources.xml`
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+  <issue id="UnusedResources">
+    <ignore path="res/drawable/unused.xml" />
+  </issue>
+</lint>
+```
+
+Then run lint using it.
+
+```shell
+% ./gradlew :app:lintDebug -Prur.overrideLintConfig="./lint.unusedresources.xml"
+```
+
 # Gradle task and options
 
 Gradle tasks:
