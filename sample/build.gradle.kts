@@ -22,17 +22,7 @@ android {
 }
 
 removeUnusedResource {
-    // simple command from xml:
-    //   ./gradlew :sample:removeUnusedResources -Prur.lintResultXml="./sample/build/reports/lint-results-debug.xml"
-    // simple command from variant:
-    //   ./gradlew :sample:removeUnusedResources -Prur.lintVariant="debug"
-    // simple command with UnusedResources only lint:
-    // ./gradlew :sample:lintDebug :sample:removeUnusedResources -Prur.lintOptionsOnlyUnusedResources -Prur.overrideLintConfig="./lint.unusedresources.xml"
-
-    // configuration:
-    dryRun = true
     lintVariant = "debug"
-    lintResultXml = file("$buildDir/reports/lint-results-debug.xml")
 }
 
 dependencies {
