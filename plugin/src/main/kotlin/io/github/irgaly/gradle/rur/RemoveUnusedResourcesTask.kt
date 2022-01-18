@@ -61,18 +61,11 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
             .filter { it.getAttributeText("id") == "UnusedResources" }
             .forEach { issue ->
                 val message = issue.getAttributeText("message")
-                if (message == null) {
-                    logger.error("message attribute is missing: $issue")
-                    return@forEach
-                }
+                    ?: error("message attribute is missing: $issue")
                 val matchedResource =
                     Regex("^The resource `(R\\.([^.]+)\\.([^.]+))` appears to be unused$").matchEntire(
                         message
-                    )
-                if (matchedResource == null) {
-                    logger.error("unknown message: $message")
-                    return@forEach
-                }
+                    ) ?: error("unknown message: $message")
                 val (_, resourceName, resourceType, resourceId) = matchedResource.groupValues
                 val location = issue.getElements("location").first()
                 val originalTargetFile = File(location.attributes.getNamedItem("file").nodeValue)
@@ -80,7 +73,7 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                     error("target file is relative path: $originalTargetFile")
                 }
                 if (!project.rootDir.containsInDescendants(originalTargetFile)) {
-                    logger.warn("target file is outside of rootProject directory: $originalTargetFile")
+                    logger.warn("skip: target file is outside of rootProject directory: $originalTargetFile")
                     return@forEach
                 }
                 val resourceDirectory = originalTargetFile.parentFile.parentFile
@@ -99,6 +92,10 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                         }
                     } ?: emptyList()
                 }.union(listOf(originalTargetFile)).forEach { targetFile ->
+                    if ((originalTargetFile == targetFile) && !targetFile.exists()) {
+                        logger.warn("target file is not exist: $targetFile")
+                        return@forEach
+                    }
                     if (isValuesResource) {
                         // remove resource element
                         val tagNames = when (resourceType) {
@@ -115,7 +112,7 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                         }
                         if (target == null) {
                             if (originalTargetFile == targetFile) {
-                                logger.error("resource not found: $resourceName in $targetFile")
+                                logger.warn("resource not found: $resourceName in $targetFile")
                             }
                             return@forEach
                         }
@@ -164,8 +161,7 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                                 RegexOption.DOT_MATCHES_ALL
                             ).matchEntire(xmlText)?.groupValues?.get(1)
                             if (header == null || footer == null) {
-                                logger.error("cannot parse resources xml header / footer: $header / $footer")
-                                return@forEach
+                                error("cannot parse resources xml header / footer: $header / $footer")
                             }
                             val outputText = StringWriter()
                             newInstance().newTransformer()
@@ -174,10 +170,7 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                                 "^.*?(<resources.*</resources>).*?$",
                                 RegexOption.DOT_MATCHES_ALL
                             ).matchEntire(outputText.toString())?.groupValues?.get(1)
-                            if (outputXml == null) {
-                                logger.error("cannot parse output xml")
-                                return@forEach
-                            }
+                                ?: error("cannot parse output xml")
                             if (!isDryRun) {
                                 targetFile.writeText("$header$outputXml$footer")
                             }
@@ -186,13 +179,9 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                         // delete resource file
                         // target: R.animator, R.anim, R.color, R.drawable, R.mipmap,
                         // R.layout, R.menu, R.raw, R.xml, R.font
-                        if (!targetFile.exists()) {
-                            logger.error("target file is not exist: $targetFile")
-                        } else {
-                            logger.lifecycle("${dryRunMarker}delete resource file: $targetFile")
-                            if (!isDryRun) {
-                                targetFile.delete()
-                            }
+                        logger.lifecycle("${dryRunMarker}delete resource file: $targetFile")
+                        if (!isDryRun) {
+                            targetFile.delete()
                         }
                     }
                 }
