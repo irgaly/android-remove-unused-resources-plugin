@@ -1,5 +1,6 @@
 package io.github.irgaly.gradle.rur
 
+import io.github.irgaly.gradle.rur.extensions.containsInDescendants
 import io.github.irgaly.gradle.rur.extensions.getAttributeText
 import io.github.irgaly.gradle.rur.extensions.getElements
 import io.github.irgaly.gradle.rur.extensions.toSequence
@@ -11,6 +12,7 @@ import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.w3c.dom.Text
+import java.io.File
 import java.io.StringWriter
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.TransformerFactory.newInstance
@@ -73,8 +75,14 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                 }
                 val (_, resourceName, resourceType, resourceId) = matchedResource.groupValues
                 val location = issue.getElements("location").first()
-                val originalTargetFile =
-                    project.file(location.attributes.getNamedItem("file").nodeValue)
+                val originalTargetFile = File(location.attributes.getNamedItem("file").nodeValue)
+                if (!originalTargetFile.isAbsolute) {
+                    error("target file is relative path: $originalTargetFile")
+                }
+                if (!project.rootDir.containsInDescendants(originalTargetFile)) {
+                    logger.warn("target file is outside of rootProject directory: $originalTargetFile")
+                    return@forEach
+                }
                 val resourceDirectory = originalTargetFile.parentFile.parentFile
                 val isValuesResource =
                     Regex("values(-.+)?").matches(originalTargetFile.parentFile.name)

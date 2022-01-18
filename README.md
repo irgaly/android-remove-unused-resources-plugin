@@ -171,6 +171,11 @@ removeUnusedResource {
 }
 ```
 
+# Other behaviors
+
+* Don't remove the resources that is outside of rootProject directory.
+  * That resources are reported in error message.
+
 # Known Issues
 
 * Android Lint Bug (not this plugin's bug)
