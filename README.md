@@ -173,15 +173,15 @@ removeUnusedResource {
 
 # Other behaviors
 
-* Don't remove the resources that is outside of rootProject directory.
-  * That resources are reported in error message.
+* This plugin does not remove the resources that is **outside of rootProject directory**.
+  * Those resources are reported in error message.
 
 # Known Issues
 
 * Android Lint Bug (not this plugin's bug)
   * When project is multi module project with `android.nonTransitiveRClass=true`, and two module has
     same resource ID, Android Lint can't find out that resource is not used.
-    * This is reproduced in AGP 7.0.1.
+    * I'm find out this behavior with AGP 7.0.1.
     * example: moduleA has R.drawable.image (this is used) and moduleB has R.drawable.image (this is
       not used), Android Lint is not report moduleB's R.drawable.image
       * related IssueTracker? https://issuetracker.google.com/issues/188871862
