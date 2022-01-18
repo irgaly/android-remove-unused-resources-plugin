@@ -40,7 +40,8 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
         } ?: lintResultXml.orNull?.asFile
         if (lintResultFile == null) {
             val variant =
-                (project.properties["rur.lintVariant"] as? String) ?: lintVariant.orNull ?: ""
+                (project.properties["rur.lintVariant"] as? String) ?: lintVariant.orNull
+                ?: getDefaultVariant() ?: ""
             val fileName =
                 "lint-results${if (variant.isEmpty()) "" else "-$variant"}.xml"
             lintResultFile = checkNotNull(project.file("${project.buildDir}/reports/$fileName"))
@@ -188,5 +189,23 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                     }
                 }
             }
+    }
+
+    /**
+     * get default variant from "lint" task's dependencies.
+     * ex) "lintDebug" Task
+     *
+     * if AGP version is lower than 7.0.0, this returns null
+     */
+    private fun getDefaultVariant(): String? {
+        return project.tasks.findByName("lint")?.let { lintTask ->
+            val depends =
+                lintTask.dependsOn.filterIsInstance<String>().filter { it.startsWith("lint") }
+            if (depends.size == 1) {
+                // if AGP 7.0.0 or upper, lint task depends default variant lint task, named "lint{variant}"
+                Regex("^lint(.+)$").matchEntire(depends.first())?.groupValues?.get(1)
+                    ?.decapitalize()
+            } else null
+        }
     }
 }

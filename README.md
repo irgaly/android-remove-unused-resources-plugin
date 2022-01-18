@@ -145,7 +145,7 @@ Gradle properties:
 | property | description | example |
 | --- | --- | --- |
 | rur.dryRun | only output result, without deletion | `./gradlew :app:removeUnusedResouces -Prur.dryRun` |
-| rur.lintVariant | the variant for lint result xml path. use `{buildDir}/reports/lint-results.xml` if no variant is specified. | `./gradlew :app:removeUnusedResources -Prur.lintVariant=debug` |
+| rur.lintVariant | the variant for lint result xml path. if lintResultXml is set, lintVariant is ignored. use `{buildDir}/reports/lint-results-{default variant}.xml` if no variant is specified in AGP 7.0.0 or upper. | `./gradlew :app:removeUnusedResources -Prur.lintVariant=debug` |
 | rur.lintResultXml | the lint result xml path from rootProject (or full absolute path) | `./gradlew :app:removeUnusedResources -Prur.lintResultXml="./app/build/reports/lint-results-debug.xml"` |
 | rur.lintOptionsOnlyUnusedResources | override lintOptions for checkOnly UnusedResources | `./gradlew :app:lintDebug -Prur.lintOptionsOnlyUnusedResources`
 | rur.overrideLintConfig | override lintOptions.lintConfig. the path is from rootProject (or full absolute path) | `./gradlew :app:lintDebug -Prur.overrideLintConfig="./lint.unusedresources.xml"`
@@ -162,10 +162,11 @@ removeUnusedResource {
   // default: false
   dryRun = true
   // specify lint target variant for result xml file detection
-  // default: not specified (use {buildDir}/reports/lint-results.xml)
+  // if lintResultXml is set, lintVariant is ignored.
+  // default: not specified (use {buildDir}/reports/lint-results-{default variant}.xml) in AGP 7.0.0 or upper
   lintVariant = "debug"
   // specify lint result xml directly
-  // default: not specified (use {buildDir}/reports/lint-results.xml)
+  // default: not specified (use {buildDir}/reports/lint-results-{default variant}.xml) in AGP 7.0.0 or upper
   lintResultXml = file("$buildDir/reports/lint-results-debug.xml")
 }
 ```
