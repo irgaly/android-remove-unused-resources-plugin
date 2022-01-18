@@ -29,7 +29,7 @@ Apply the plugin to your app module.
 
 ```kotlin
 plugins {
-  id("io.github.irgaly.remove-unused-resources").version("0.9.0")
+  id("io.github.irgaly.remove-unused-resources").version("0.9.1")
 }
 ```
 
