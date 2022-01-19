@@ -21,7 +21,29 @@ To be FIX List:
 * support ignore resource feature in plugin
   * resource id pattern
 
+# Requires
+
+* Gradle 5.6 ~
+  * use new Plugin version management system (settings.gradle.kts + pluginManagement)
+* Android Gradle Plugin 4.0.0 ~
+
 # Usage
+
+Add pluginManagement repository settings.
+
+`settings.gradle.kts`
+
+```kotlin
+// ...
+pluginManagement {
+  repositories {
+    google()
+    mavenCentral()
+    gradlePluginPortal()
+  }
+}
+// ...
+```
 
 Apply the plugin to your app module.
 
@@ -175,6 +197,25 @@ removeUnusedResource {
 
 * This plugin does not remove the resources that is **outside of rootProject directory**.
   * Those resources are reported in error message.
+
+# Troubleshoot
+
+## Could not find com.android.tools.build:gradle:{version}
+
+This error occurs without pluginManagement > repository settings in settings.gradle.kts.
+
+See [Usage](#Usage) section, and add pluginManagement settings.
+
+```shell
+org.gradle.api.internal.artifacts.ivyservice.DefaultLenientConfiguration$ArtifactResolveException: Could not resolve all files for configuration ':app:classpath'.
+# ...
+Caused by: org.gradle.internal.resolve.ModuleVersionNotFoundException: Could not find com.android.tools.build:gradle:7.0.4.
+Searched in the following locations:
+  - https://plugins.gradle.org/m2/com/android/tools/build/gradle/7.0.4/gradle-7.0.4.pom
+If the artifact you are trying to retrieve can be found in the repository but without metadata in 'Maven POM' format, you need to adjust the 'metadataSources { ... }' of the repository declaration.
+Required by:
+    project :app > io.github.irgaly.remove-unused-resources:io.github.irgaly.remove-unused-resources.gradle.plugin:0.9.1 > io.github.irgaly:plugin:0.9.1
+```
 
 # Known Issues
 
