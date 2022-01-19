@@ -1,5 +1,7 @@
 package io.github.irgaly.gradle.rur
 
+import com.android.build.api.AndroidPluginVersion
+import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.internal.lint.AndroidLintTask
 import io.github.irgaly.gradle.rur.extensions.finalizeAgpDsl
@@ -9,7 +11,15 @@ import java.io.File
 
 
 class RemoveUnusedResourcesPlugin : Plugin<Project> {
+    @Suppress("UnstableApiUsage") // for AndroidPluginVersion
     override fun apply(target: Project) {
+        val projectAgpVersion =
+            target.extensions.findByType(AndroidComponentsExtension::class.java)?.pluginVersion
+        if (projectAgpVersion == null ||
+            projectAgpVersion < AndroidPluginVersion(7, 0)
+        ) {
+            error("support only AGP 7.0.0 or higher")
+        }
         val providers = target.providers
         val extension = target.extensions.create(
             "removeUnusedResources",
