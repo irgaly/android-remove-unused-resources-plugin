@@ -198,9 +198,9 @@ removeUnusedResource {
 * This plugin does not remove the resources that is **outside of rootProject directory**.
   * Those resources are reported in error message.
 
-# Troubleshoot
+# Troubleshoots
 
-## Could not find com.android.tools.build:gradle:{version}
+## `Could not find com.android.tools.build:gradle:{version}`
 
 This error occurs without pluginManagement > repository settings in settings.gradle.kts.
 
