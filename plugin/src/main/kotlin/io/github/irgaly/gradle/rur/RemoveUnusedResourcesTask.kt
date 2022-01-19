@@ -72,8 +72,13 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                 if (!originalTargetFile.isAbsolute) {
                     error("target file is relative path: $originalTargetFile")
                 }
-                if (!project.rootDir.containsInDescendants(originalTargetFile)) {
-                    logger.warn("skip: target file is outside of rootProject directory: $originalTargetFile")
+                if (listOf(project.rootProject).union(project.rootProject.subprojects).all {
+                        // check rootProject first, then check subprojects
+                        // because rootProject is most likely top of all project's directory.
+                        // any subproject placed in outside of rootProject is rare situation.
+                        !it.projectDir.containsInDescendants(originalTargetFile)
+                    }) {
+                    logger.warn("skip: target file is outside of all project's directory: $originalTargetFile")
                     return@forEach
                 }
                 val resourceDirectory = originalTargetFile.parentFile.parentFile
