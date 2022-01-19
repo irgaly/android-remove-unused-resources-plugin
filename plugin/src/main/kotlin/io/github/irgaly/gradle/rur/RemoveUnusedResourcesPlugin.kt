@@ -3,6 +3,7 @@ package io.github.irgaly.gradle.rur
 import com.android.build.gradle.BaseExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import java.io.File
 
 class RemoveUnusedResourcesPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -20,20 +21,25 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
         }
         val lintOptionsOnlyUnusedResources =
             target.properties.containsKey("rur.lintOptionsOnlyUnusedResources")
+        val disableLintConfig = target.properties.containsKey("rur.disableLintConfig")
         val overrideLintConfig = target.properties["rur.overrideLintConfig"] as? String
         val hasOverrideLintOptions =
-            (lintOptionsOnlyUnusedResources or (overrideLintConfig != null))
+            (lintOptionsOnlyUnusedResources || disableLintConfig || (overrideLintConfig != null))
         if (hasOverrideLintOptions) {
-            target.afterEvaluate { project ->
+            target.allprojects.forEach { project ->
                 project.afterEvaluate {
-                    // override lintOptions at most last phase
-                    project.extensions.getByType(BaseExtension::class.java).lintOptions.apply {
+                    project.extensions.findByType(BaseExtension::class.java)?.lintOptions?.apply {
                         if (lintOptionsOnlyUnusedResources) {
-                            xmlReport = true
-                            isCheckDependencies = true
+                            if (project == target) {
+                                xmlReport = true
+                                isCheckDependencies = true
+                            }
                             checkOnly.clear()
                             checkOnly("UnusedResources")
                             warning("UnusedResources")
+                        }
+                        if (disableLintConfig) {
+                            lintConfig = File("")
                         }
                         if (overrideLintConfig != null) {
                             val file = target.rootProject.file(overrideLintConfig)
