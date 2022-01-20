@@ -20,6 +20,8 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
                 dryRun.set(extension.dryRun)
                 lintVariant.set(extension.lintVariant)
                 lintResultXml.set(extension.lintResultXml)
+                excludeIds.set(extension.excludeIds)
+                excludeIdPatterns.set(extension.excludeIdPatterns)
                 mustRunAfter(target.tasks.withType(AndroidLintTask::class.java))
             }
         }

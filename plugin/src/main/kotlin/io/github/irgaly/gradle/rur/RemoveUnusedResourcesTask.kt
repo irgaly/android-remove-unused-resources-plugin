@@ -6,6 +6,7 @@ import io.github.irgaly.gradle.rur.extensions.getElements
 import io.github.irgaly.gradle.rur.extensions.toSequence
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
@@ -32,6 +33,14 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
     @get:InputFile
     abstract val lintResultXml: RegularFileProperty
 
+    @get:Optional
+    @get:Input
+    abstract val excludeIds: ListProperty<String>
+
+    @get:Optional
+    @get:Input
+    abstract val excludeIdPatterns: ListProperty<String>
+
     @Suppress("LABEL_NAME_CLASH") // for using: return@forEach
     @TaskAction
     fun run() {
@@ -49,6 +58,9 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
             lintResultFile = checkNotNull(project.file("${project.buildDir}/reports/$fileName"))
         }
         logger.info("lintResultFile = $lintResultFile")
+        val excludeResourceNames = (excludeIds.orNull?.toHashSet() ?: emptySet())
+        val excludeResourceNamePatterns =
+            (excludeIdPatterns.orNull?.map { it.toRegex() } ?: emptyList())
         if (!lintResultFile.exists()) {
             throw IllegalArgumentException("lint report file is not exist: $lintResultFile")
         }
@@ -67,6 +79,12 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                         message
                     ) ?: error("unknown message: $message")
                 val (_, resourceName, resourceType, resourceId) = matchedResource.groupValues
+                if (excludeResourceNames.contains(resourceName) ||
+                    excludeResourceNamePatterns.any { it.matches(resourceName) }
+                ) {
+                    logger.debug("skip because exclude resource id: $resourceName")
+                    return@forEach
+                }
                 val location = issue.getElements("location").first()
                 val originalTargetFile = File(location.attributes.getNamedItem("file").nodeValue)
                 if (!originalTargetFile.isAbsolute) {
