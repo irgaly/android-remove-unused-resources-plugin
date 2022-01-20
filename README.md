@@ -4,7 +4,7 @@ A gradle plugin to remove unused android resources by Android Lint results xml f
 
 This is useful for CI because that is provided by gradle task.
 
-# Concept
+# Concepts
 
 * This plugin uses Android Lint results xml file for detect unused resources.
   * It supports multi module Android project, because of using Android Lint.
@@ -12,14 +12,20 @@ This is useful for CI because that is provided by gradle task.
   * It is suitable to run in CI action.
   * It is equivalent to Android Studio's `Refactor > Remove Unused Resources...` action.
 * Support all Android's resource type and alternative resources detection.
-  * all resources (animator, anim, color...)
+  * Support all resources (animator, anim, color...)
     in https://developer.android.com/guide/topics/resources/providing-resources#ResourceTypes
-  * alternative resources (`-<qualifier>`: ex, values-night, drawable-hdpi, values-v26...)
+  * Support alternative resources (`-<qualifier>`: ex, values-night, drawable-hdpi, values-v26...)
+  * Support 9-patch drawable files detection.
+* Fast
+  * It is fast task because this plugin executes only deleting resource tags or files.
+    * Android Lint task may takes long time than this plugin takes :innocent:
 
 To be FIX List:
 
 * support ignore resource feature in plugin
   * resource id pattern
+* preserve original xml string such as comment tags, spaces, character codes reference and XML
+  special characters.
 
 # Requires
 
