@@ -1,3 +1,18 @@
+# v0.9.2 - 2022/01/20
+
+## Feature
+
+* Add rur.disableLintConfig option.
+
+## Changes
+
+* Don't remove resources outside of rootProject directory for safety.
+
+## FIX
+
+* lintOptionsOnlyUnusedResources option affects to all subprojects.
+* removeUnusedResources must run after other lint tasks for one liner
+
 # v0.9.1 - 2022/01/18
 
 ## Changes
