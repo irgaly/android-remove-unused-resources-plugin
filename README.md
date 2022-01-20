@@ -161,6 +161,12 @@ This executes:
   * Report will be saved to `app/build/reports/lint-results-debug.xml`.
 * Clean up unused resources by lint result (`app/build/reports/lint-results-debug.xml`)
 
+# Exclude Resources rules
+
+There are options to set exclude resources rules.
+
+See [Gradle configuration syntax](#Gradle configuration syntax) section.
+
 # Gradle task and options
 
 Gradle tasks:
@@ -198,6 +204,10 @@ removeUnusedResource {
   // specify lint result xml directly
   // default: not specified (use {buildDir}/reports/lint-results-{default variant}.xml) in AGP 7.0.0 or upper
   lintResultXml = file("$buildDir/reports/lint-results-debug.xml")
+  // exclude resource Id list. match rule: entire match
+  excludeIds = listOf("R.color.unused_exclude_color")
+  // regular expression exclude resource Id list. match rule: regular expression entire match
+  excludeIdPatterns = listOf("R\\..*exclude_pattern.*")
 }
 ```
 
