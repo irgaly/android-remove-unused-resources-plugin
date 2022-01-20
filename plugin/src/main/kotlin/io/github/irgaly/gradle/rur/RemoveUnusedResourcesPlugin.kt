@@ -27,7 +27,7 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
             }
         }
         val onlyUnusedResources =
-            target.properties.containsKey("rur.lint.OnlyUnusedResources")
+            target.properties.containsKey("rur.lint.onlyUnusedResources")
         val disableLintConfig = target.properties.containsKey("rur.lint.disableLintConfig")
         val overrideLintConfig = target.properties["rur.lint.overrideLintConfig"] as? String
         val hasOverrideLintOptions =
