@@ -163,7 +163,7 @@ This executes:
 
 There are options to set exclude resource ID rules or file path rules.
 
-See [Gradle configuration syntax](#Gradle configuration syntax) section.
+See [Gradle configuration syntax](#gradle-configuration-syntax) section.
 
 # Gradle task and options
 
@@ -208,10 +208,11 @@ removeUnusedResource {
   excludeIdPatterns = listOf("R\\..*exclude_pattern.*")
   // glob expression exclude file.
   // file path is relative path from Project's root directory
-  // details of glob pattern is documented here https://docs.oracle.com/javase/8/docs/api/java/nio/file/FileSystem.html#getPathMatcher-java.lang.String-
   excludeFiles = listOf("**/values/exclude_colors.xml")
 }
 ```
+
+The details of glob pattern is documented here https://docs.oracle.com/javase/8/docs/api/java/nio/file/FileSystem.html#getPathMatcher-java.lang.String-
 
 # Other behaviors
 
@@ -224,7 +225,7 @@ removeUnusedResource {
 
 This error occurs without pluginManagement > repository settings in settings.gradle.kts.
 
-See [Usage](#Usage) section, and add pluginManagement settings.
+See [Usage](#usage) section, and add pluginManagement settings.
 
 ```shell
 org.gradle.api.internal.artifacts.ivyservice.DefaultLenientConfiguration$ArtifactResolveException: Could not resolve all files for configuration ':app:classpath'.
