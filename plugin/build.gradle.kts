@@ -20,7 +20,7 @@ dependencies {
 }
 
 group = "io.github.irgaly"
-version = "0.9.1"
+version = "0.9.2"
 
 java {
     withSourcesJar()
