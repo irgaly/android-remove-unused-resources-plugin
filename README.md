@@ -182,7 +182,7 @@ Gradle properties:
 | rur.lintResultXml | the lint result xml path from rootProject (or full absolute path) | `./gradlew :app:removeUnusedResources -Prur.lintResultXml="./app/build/reports/lint-results-debug.xml"` |
 | rur.lint.onlyUnusedResources | override lintOptions for checkOnly UnusedResources | `./gradlew :app:lintDebug -Prur.lint.onlyUnusedResources` |
 | rur.lint.disableLintConfig | override lintOptions.lintConfig to empty to disable lint.xml loading | `./gradlew :app:lintDebug -Prur.lint.disableLintConfig` |
-| rur.lint.overrideLintConfig | override lintOptions.lintConfig. the path is from rootProject (or full absolute path) | `./gradlew :app:lintDebug -Prur.lint.overrideLintConfig="./lint.unusedresources.xml"` |
+| rur.lint.overrideLintConfig | override lintOptions.lintConfig. the path is relative path from rootProject (or full absolute path) | `./gradlew :app:lintDebug -Prur.lint.overrideLintConfig="./lint.unusedresources.xml"` |
 
 # Gradle configuration syntax
 
