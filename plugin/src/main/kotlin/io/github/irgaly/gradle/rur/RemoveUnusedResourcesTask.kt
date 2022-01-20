@@ -15,6 +15,7 @@ import org.gradle.api.tasks.TaskAction
 import org.w3c.dom.Text
 import java.io.File
 import java.io.StringWriter
+import java.nio.file.FileSystems
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.transform.TransformerFactory.newInstance
 import javax.xml.transform.dom.DOMSource
@@ -41,6 +42,10 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
     @get:Input
     abstract val excludeIdPatterns: ListProperty<String>
 
+    @get:Optional
+    @get:Input
+    abstract val excludeFiles: ListProperty<String>
+
     @Suppress("LABEL_NAME_CLASH") // for using: return@forEach
     @TaskAction
     fun run() {
@@ -61,6 +66,11 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
         val excludeResourceNames = (excludeIds.orNull?.toHashSet() ?: emptySet())
         val excludeResourceNamePatterns =
             (excludeIdPatterns.orNull?.map { it.toRegex() } ?: emptyList())
+        val excludeFileMatchers = FileSystems.getDefault().let { fileSystem ->
+            excludeFiles.orNull?.map {
+                fileSystem.getPathMatcher("glob:$it")
+            } ?: emptyList()
+        }
         if (!lintResultFile.exists()) {
             throw IllegalArgumentException("lint report file is not exist: $lintResultFile")
         }
@@ -82,7 +92,7 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                 if (excludeResourceNames.contains(resourceName) ||
                     excludeResourceNamePatterns.any { it.matches(resourceName) }
                 ) {
-                    logger.debug("skip because exclude resource id: $resourceName")
+                    logger.debug("ignore because exclude resource id: $resourceName")
                     return@forEach
                 }
                 val location = issue.getElements("location").first()
@@ -106,7 +116,7 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                 val targetDirectories = resourceDirectory.listFiles()?.filter {
                     Regex("$directoryName(-.+)?").matches(it.name)
                 } ?: emptyList()
-                targetDirectories.flatMap { directory ->
+                var targetFiles = targetDirectories.flatMap { directory ->
                     directory.listFiles()?.filter {
                         if (isValuesResource) {
                             it.name.endsWith(".xml")
@@ -114,7 +124,26 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                             (Regex("\\.9$").replace(it.nameWithoutExtension, "") == resourceId)
                         }
                     } ?: emptyList()
-                }.union(listOf(originalTargetFile)).forEach { targetFile ->
+                }.let { listOf(originalTargetFile).union(it).toList() }
+                if (isValuesResource) {
+                    // ignore only exclude file
+                    targetFiles = targetFiles.filterNot { targetFile ->
+                        excludeFileMatchers.any {
+                            it.matches(targetFile.relativeTo(project.rootDir).toPath())
+                        }
+                    }
+                } else {
+                    // ignore resource if any file is matched
+                    if (targetFiles.any { targetFile ->
+                            excludeFileMatchers.any {
+                                it.matches(targetFile.relativeTo(project.rootDir).toPath())
+                            }
+                        }) {
+                        logger.debug("ignore because exclude file matched: $resourceName")
+                        return@forEach
+                    }
+                }
+                targetFiles.forEach { targetFile ->
                     if ((originalTargetFile == targetFile) && !targetFile.exists()) {
                         logger.warn("target file is not exist: $targetFile")
                         return@forEach

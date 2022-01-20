@@ -22,8 +22,6 @@ This is useful for CI because that is provided by gradle task.
 
 To be FIX List:
 
-* support ignore resource feature in plugin
-  * resource id pattern
 * preserve original xml string such as comment tags, spaces, character codes reference and XML
   special characters.
 
@@ -163,7 +161,7 @@ This executes:
 
 # Exclude Resources rules
 
-There are options to set exclude resources rules.
+There are options to set exclude resource ID rules or file path rules.
 
 See [Gradle configuration syntax](#Gradle configuration syntax) section.
 
@@ -208,6 +206,10 @@ removeUnusedResource {
   excludeIds = listOf("R.color.unused_exclude_color")
   // regular expression exclude resource Id list. match rule: regular expression entire match
   excludeIdPatterns = listOf("R\\..*exclude_pattern.*")
+  // glob expression exclude file.
+  // file path is relative path from Project's root directory
+  // details of glob pattern is documented here https://docs.oracle.com/javase/8/docs/api/java/nio/file/FileSystem.html#getPathMatcher-java.lang.String-
+  excludeFiles = listOf("**/values/exclude_colors.xml")
 }
 ```
 
