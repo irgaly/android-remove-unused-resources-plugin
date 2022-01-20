@@ -1,3 +1,17 @@
+# v1.0.0 - 2022/01/21
+
+First Stable release.
+
+## Feature
+
+* Support exclude options: excludeResourceIds, excludeResourceIdPatterns, excludeFiles
+
+## Changes
+
+* change rur.lintOptionsOnlyUnusedResources to rur.lint.onlyUnusedResources
+* change rur.disableLintConfig to rur.lint.disableLintConfig
+* change rur.overrideLintConfig -> rur.lint.overrideLintConfig
+
 # v0.9.2 - 2022/01/20
 
 ## Feature
