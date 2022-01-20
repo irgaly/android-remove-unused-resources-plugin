@@ -101,14 +101,14 @@ This plugin provides simple utility for lint, that overrides lint options.
 For example, this command let lint to check only `UnusedResources` rule.
 
 ```shell
-% ./gradlew :app:lintDebug -Prur.lintOptionsOnlyUnusedResources
+% ./gradlew :app:lintDebug -Prur.lint.onlyUnusedResources
 ```
 
-The `-Prur.lintOptionsOnlyUnusedResources` overrides lint options by settings below:
+The `-Prur.lint.onlyUnusedResources` overrides lint options by settings below:
 
 ```kotlin
 lintOptions {
-  // These settings are applied automatically by the plugin, when -Prur.lintOptionsOnlyUnusedResources is specified,
+  // These settings are applied automatically by the plugin, when -Prur.lint.onlyUnusedResources is specified,
   // so you don't have to add these settings in build.gradle.kts.
   xmlReport = true
   isCheckDependencies = true
@@ -123,10 +123,10 @@ lintOptions {
 This command disables to load default lint.xml.
 
 ```shell
-% ./gradlew :app:lintDebug -Prur.disableLintConfig
+% ./gradlew :app:lintDebug -Prur.lint.disableLintConfig
 ```
 
-The `-Prur.disableLintConfig` overrides lint options by settings below:
+The `-Prur.lint.disableLintConfig` overrides lint options by settings below:
 
 ```kotlin
 lintOptions {
@@ -137,7 +137,7 @@ lintOptions {
 Also you can overrides a single lintConfig file for all projects.
 
 ```shell
-% ./gradlew :app:lintDebug -Prur.overrideLintConfig="./lint.unusedresources.xml"
+% ./gradlew :app:lintDebug -Prur.lint.overrideLintConfig="./lint.unusedresources.xml"
 ```
 
 The details of lint.xml format
@@ -149,7 +149,7 @@ is [here](https://googlesamples.github.io/android-custom-lint-rules/user-guide.h
 This is recommended one liner for CI.
 
 ```shell
-% ./gradlew :app:lintDebug :app:removeUnusedResources -Prur.lintOptionsOnlyUnusedResources -Prur.disableLintConfig -Prur.lintVariant="debug"
+% ./gradlew :app:lintDebug :app:removeUnusedResources -Prur.lint.onlyUnusedResources -Prur.lint.disableLintConfig -Prur.lintVariant="debug"
 ```
 
 This executes:
@@ -180,9 +180,9 @@ Gradle properties:
 | rur.dryRun | only output result, without deletion | `./gradlew :app:removeUnusedResouces -Prur.dryRun` |
 | rur.lintVariant | the variant for lint result xml path. if lintResultXml is set, lintVariant is ignored. use `{buildDir}/reports/lint-results-{default variant}.xml` if no variant is specified in AGP 7.0.0 or upper. | `./gradlew :app:removeUnusedResources -Prur.lintVariant=debug` |
 | rur.lintResultXml | the lint result xml path from rootProject (or full absolute path) | `./gradlew :app:removeUnusedResources -Prur.lintResultXml="./app/build/reports/lint-results-debug.xml"` |
-| rur.lintOptionsOnlyUnusedResources | override lintOptions for checkOnly UnusedResources | `./gradlew :app:lintDebug -Prur.lintOptionsOnlyUnusedResources` |
-| rur.disableLintConfig | override lintOptions.lintConfig to empty to disable lint.xml loading | `./gradlew :app:lintDebug -Prur.disableLintConfig` |
-| rur.overrideLintConfig | override lintOptions.lintConfig. the path is from rootProject (or full absolute path) | `./gradlew :app:lintDebug -Prur.overrideLintConfig="./lint.unusedresources.xml"` |
+| rur.lint.onlyUnusedResources | override lintOptions for checkOnly UnusedResources | `./gradlew :app:lintDebug -Prur.lint.onlyUnusedResources` |
+| rur.lint.disableLintConfig | override lintOptions.lintConfig to empty to disable lint.xml loading | `./gradlew :app:lintDebug -Prur.lint.disableLintConfig` |
+| rur.lint.overrideLintConfig | override lintOptions.lintConfig. the path is from rootProject (or full absolute path) | `./gradlew :app:lintDebug -Prur.lint.overrideLintConfig="./lint.unusedresources.xml"` |
 
 # Gradle configuration syntax
 

@@ -26,17 +26,17 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
                 mustRunAfter(target.tasks.withType(AndroidLintTask::class.java))
             }
         }
-        val lintOptionsOnlyUnusedResources =
-            target.properties.containsKey("rur.lintOptionsOnlyUnusedResources")
-        val disableLintConfig = target.properties.containsKey("rur.disableLintConfig")
-        val overrideLintConfig = target.properties["rur.overrideLintConfig"] as? String
+        val onlyUnusedResources =
+            target.properties.containsKey("rur.lint.OnlyUnusedResources")
+        val disableLintConfig = target.properties.containsKey("rur.lint.disableLintConfig")
+        val overrideLintConfig = target.properties["rur.lint.overrideLintConfig"] as? String
         val hasOverrideLintOptions =
-            (lintOptionsOnlyUnusedResources || disableLintConfig || (overrideLintConfig != null))
+            (onlyUnusedResources || disableLintConfig || (overrideLintConfig != null))
         if (hasOverrideLintOptions) {
             target.allprojects.forEach { project ->
                 project.afterEvaluate {
                     project.extensions.findByType(BaseExtension::class.java)?.lintOptions?.apply {
-                        if (lintOptionsOnlyUnusedResources) {
+                        if (onlyUnusedResources) {
                             if (project == target) {
                                 xmlReport = true
                                 isCheckDependencies = true
