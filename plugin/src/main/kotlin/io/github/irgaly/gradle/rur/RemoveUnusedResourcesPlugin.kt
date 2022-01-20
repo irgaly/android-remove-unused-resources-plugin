@@ -1,6 +1,7 @@
 package io.github.irgaly.gradle.rur
 
 import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.internal.lint.AndroidLintTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.io.File
@@ -15,9 +16,12 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
             "removeUnusedResources",
             RemoveUnusedResourcesTask::class.java
         ) { task ->
-            task.dryRun.set(extension.dryRun)
-            task.lintVariant.set(extension.lintVariant)
-            task.lintResultXml.set(extension.lintResultXml)
+            task.apply {
+                dryRun.set(extension.dryRun)
+                lintVariant.set(extension.lintVariant)
+                lintResultXml.set(extension.lintResultXml)
+                mustRunAfter(target.tasks.withType(AndroidLintTask::class.java))
+            }
         }
         val lintOptionsOnlyUnusedResources =
             target.properties.containsKey("rur.lintOptionsOnlyUnusedResources")
