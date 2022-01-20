@@ -212,7 +212,7 @@ removeUnusedResource {
 }
 ```
 
-The details of glob pattern is documented here https://docs.oracle.com/javase/8/docs/api/java/nio/file/FileSystem.html#getPathMatcher-java.lang.String-
+The details of glob pattern is documented in [JDK FileSystem#getPathMatcher]( https://docs.oracle.com/javase/8/docs/api/java/nio/file/FileSystem.html#getPathMatcher-java.lang.String-)
 
 # Other behaviors
 
