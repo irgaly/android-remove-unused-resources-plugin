@@ -24,7 +24,7 @@ class XmlConverterTest: DescribeSpec({
                 (startElement.getAttributeValue("name") == "test")
             }
             val output = StringWriter()
-            converter.apply(xml.byteInputStream(), output)
+            converter.convert(xml.byteInputStream(), output)
             output.toString() shouldBe """
 <root>
 <element3 name="other"/>
@@ -40,7 +40,7 @@ class XmlConverterTest: DescribeSpec({
                 it.event.asStartElement().name == QName("a")
             }
             val output = StringWriter()
-            converter.apply(xml.byteInputStream(), output)
+            converter.convert(xml.byteInputStream(), output)
             output.toString() shouldBe """
 <root>
 </root>
@@ -56,7 +56,7 @@ class XmlConverterTest: DescribeSpec({
                 it.event.asStartElement().name == QName("a")
             }
             val output = StringWriter()
-            converter.apply(xml.byteInputStream(), output)
+            converter.convert(xml.byteInputStream(), output)
             output.toString() shouldBe """
 <root>
  <b/>
@@ -71,7 +71,7 @@ class XmlConverterTest: DescribeSpec({
                 it.event.asStartElement().name == QName("a")
             }
             val output = StringWriter()
-            converter.apply(xml.byteInputStream(), output)
+            converter.convert(xml.byteInputStream(), output)
             output.toString() shouldBe """
 <root> </root>
             """.trimIndent()

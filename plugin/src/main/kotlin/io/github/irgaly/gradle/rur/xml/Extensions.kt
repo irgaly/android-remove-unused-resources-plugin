@@ -13,3 +13,7 @@ fun StartElement.hasAttribute(name: String): Boolean {
 fun StartElement.getAttributeValue(name: String): String? {
     return getAttributeByName(QName(name))?.value
 }
+
+fun StartElement.getAttributeValue(name: QName): String? {
+    return getAttributeByName(name)?.value
+}

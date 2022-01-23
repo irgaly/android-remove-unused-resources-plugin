@@ -8,15 +8,17 @@ import java.io.Writer
 class XmlConverter(
     val removeElementCondition: (startElementEvent: XmlEvent) -> Boolean
 ) {
-    fun apply(input: InputStream, output: Writer) {
+    fun convert(input: InputStream, output: Writer): Result {
+        val removed = mutableListOf<XmlEvent>()
         OriginalCharactersStaxXmlParser(input).use { parser ->
             var keep: XmlEvent? = null
-            while(parser.hasNext()) {
+            while (parser.hasNext()) {
                 val event = parser.nextEvent()
                 if (event.event.isStartElement) {
                     if (removeElementCondition(event)) {
+                        removed.add(event)
                         // skip to end element
-                        while(parser.hasNext()) {
+                        while (parser.hasNext()) {
                             val next = parser.nextEvent()
                             if (next.event.isEndElement && next.parent == event.parent) {
                                 break
@@ -54,5 +56,10 @@ class XmlConverter(
                 }
             }
         }
+        return Result(removed.toList())
     }
+
+    data class Result(
+        val removed: List<XmlEvent>
+    )
 }
