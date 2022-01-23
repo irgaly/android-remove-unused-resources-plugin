@@ -1,6 +1,7 @@
 package io.github.irgaly.gradle.rur.xml
 
 import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.shouldBe
 import java.io.StringWriter
 
 class OriginalCharactersStaxXmlParserTest: DescribeSpec({
@@ -35,38 +36,18 @@ class OriginalCharactersStaxXmlParserTest: DescribeSpec({
     <!-- footer comment2 -->
     
     """.trimIndent()
-    val eventMap = mapOf(
-        1 to "START_ELEMENT",
-        2 to "END_ELEMENT",
-        3 to "PROCESSING_INSTRUCTION",
-        4 to "CHARACTERS",
-        5 to "COMMENT",
-        6 to "SPACE",
-        7 to "START_DOCUMENT",
-        8 to "END_DOCUMENT",
-        9 to "ENTITY_REFERENCE",
-        10 to "ATTRIBUTE",
-        11 to "DTD",
-        12 to "CDATA",
-        13 to "NAMESPACE",
-        14 to "NOTATION_DECLARATION",
-        15 to "ENTITY_DECLARATION"
-    )
     describe("stax parser") {
-        it("simple") {
+        it("parsed xml is same as input") {
             val parser = OriginalCharactersStaxXmlParser(xml.byteInputStream())
-            while(parser.hasNext()) {
+            val output1 = StringWriter()
+            val output2 = StringWriter()
+            while (parser.hasNext()) {
                 val event = parser.nextEvent()
-                val b = StringWriter()
-                event.event.writeAsEncodedUnicode(b)
-                println(
-                    "event ${eventMap[event.event.eventType]} ${event.originalLocation}:|$b|${
-                        xml.substring(
-                            event.originalLocation
-                        )
-                    }|${event.originalText}|"
-                )
+                output1.append(xml.substring(event.originalLocation))
+                output2.append(event.originalText)
             }
+            output1.toString() shouldBe xml
+            output2.toString() shouldBe xml
         }
     }
 })
