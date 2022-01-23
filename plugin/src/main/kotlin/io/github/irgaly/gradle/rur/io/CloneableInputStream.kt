@@ -33,7 +33,7 @@ class CloneableInputStream(private val input: InputStream): InputStream() {
     }
 
     override fun close() {
-        input.close()
+        originalInputStream.close()
     }
 
     private class ArrayDequeOutputStream(initial: Array<Int> = emptyArray()): OutputStream() {
@@ -112,6 +112,9 @@ class CloneableInputStream(private val input: InputStream): InputStream() {
         override fun close() {
             closed = true
             forks.remove(source)
+            if (forks.isEmpty()) {
+                input.close()
+            }
         }
 
         private fun applyForks(block: (OutputStream) -> Unit) {
