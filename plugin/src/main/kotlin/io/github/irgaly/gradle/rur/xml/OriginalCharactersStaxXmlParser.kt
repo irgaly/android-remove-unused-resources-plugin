@@ -1,74 +1,48 @@
 package io.github.irgaly.gradle.rur.xml
 
+import com.ctc.wstx.evt.WstxEventReader
+import com.ctc.wstx.stax.WstxInputFactory
 import io.github.irgaly.gradle.rur.io.CloneableInputStream
+import org.codehaus.stax2.XMLInputFactory2.P_AUTO_CLOSE_INPUT
+import org.codehaus.stax2.XMLInputFactory2.P_REPORT_PROLOG_WHITESPACE
+import org.codehaus.stax2.evt.XMLEvent2
 import java.io.InputStream
 import java.io.InputStreamReader
-import javax.xml.stream.XMLEventReader
-import javax.xml.stream.XMLInputFactory
-import javax.xml.stream.XMLStreamConstants.CHARACTERS
-import javax.xml.stream.XMLStreamConstants.END_DOCUMENT
-import javax.xml.stream.events.Characters
+import javax.xml.stream.XMLInputFactory.*
 
 /**
  * preserve original characters XML StAX Parser
  */
 class OriginalCharactersStaxXmlParser(input: InputStream) {
     private val originalReader: InputStreamReader
-    private val reader: XMLEventReader
+    private val reader: WstxEventReader
 
     init {
         val cloneable = CloneableInputStream(input)
         originalReader = cloneable.fork().reader()
-        reader = XMLInputFactory.newInstance().apply {
-            setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, false)
-            setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false)
-            setProperty("http://java.sun.com/xml/stream/properties/report-cdata-event", true)
-        }.createXMLEventReader(cloneable)
+        reader = (WstxInputFactory.newInstance() as WstxInputFactory).apply {
+            setProperty(P_AUTO_CLOSE_INPUT, true)
+            setProperty(P_REPORT_PROLOG_WHITESPACE, true)
+            setProperty(IS_COALESCING, true)
+            setProperty(IS_REPLACING_ENTITY_REFERENCES, false)
+            setProperty(IS_SUPPORTING_EXTERNAL_ENTITIES, false)
+        }.createXMLEventReader(cloneable) as WstxEventReader
     }
-
-    private var currentOffset = 0
 
     fun hasNext(): Boolean {
         return reader.hasNext()
     }
 
     fun nextEvent(): XmlEvent {
-        val event = reader.nextEvent()
-        var range = when(event.eventType) {
-            CHARACTERS -> {
-                val e = event.asCharacters()
-                val next = reader.peek()
-                if (e.isSurrogate) {
-                    (currentOffset until event.location.characterOffset)
-                } else if (e.isCData) {
-                    (currentOffset until event.location.characterOffset)
-                } else if (next.isEndElement) {
-                    (currentOffset until event.location.characterOffset-2)
-                } else {
-                    (currentOffset until event.location.characterOffset-1)
-                }
-            }
-            else -> (currentOffset until event.location.characterOffset)
-        }
-        currentOffset = range.last + 1
-        var text =
-        if (event.eventType == END_DOCUMENT) {
-            originalReader.readText().toCharArray()
+        val event = reader.nextEvent() as XMLEvent2
+        val next = reader.peek()
+        val range = if (next != null) {
+            event.location.characterOffset until next.location.characterOffset
         } else {
-            CharArray(range.count()).also{
-                originalReader.read(it)
-            }
+            // empty range
+            event.location.characterOffset until event.location.characterOffset
         }
-        if (event.eventType == END_DOCUMENT) {
-            range = (range.first until (range.first+text.size))
-        }
-        if (event.eventType == CHARACTERS) {
-            if (!event.asCharacters().isSurrogate && text.firstOrNull() == '&') {
-                text += originalReader.read().toChar()
-                range = (range.first until event.location.characterOffset)
-                currentOffset = range.last + 1
-            }
-        }
+        val text = CharArray(range.count()).also { originalReader.read(it) }
         return XmlEvent(
             event,
             range,
@@ -76,8 +50,3 @@ class OriginalCharactersStaxXmlParser(input: InputStream) {
         )
     }
 }
-
-val Characters.isSurrogate: Boolean get() {
-    return this.data.last().isLowSurrogate()
-}
-

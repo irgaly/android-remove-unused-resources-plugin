@@ -1,6 +1,7 @@
 package io.github.irgaly.gradle.rur.xml
 
 import io.kotest.core.spec.style.DescribeSpec
+import java.io.StringWriter
 
 class OriginalCharactersStaxXmlParserTest: DescribeSpec({
     val xml = """
@@ -9,7 +10,7 @@ class OriginalCharactersStaxXmlParserTest: DescribeSpec({
 <!ENTITY valid "VALID">
 ]>
     <!-- header comment1 -->
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- comment1 -->
     <element1>element1</element1>
     <element2>test<!-- comment2 -->test</element2>
@@ -21,13 +22,18 @@ class OriginalCharactersStaxXmlParserTest: DescribeSpec({
 <refs>test%ref;test</refs>
 <amp>test&amp;#169;test</amp>
 <attrs name="attr >">attr ></attrs>
+<attrs tools:override="true"></attrs>
 <emoji>👨🏻‍🦱</emoji>
 <surrogate>&#x1F6AD;</surrogate>
 <surrogate>a🚭a🚭a</surrogate>
-<ivs>${ubyteArrayOf(0xE9U, 0x82U, 0x8AU, 0xF3U, 0xA0U, 0x84U, 0x80U).toByteArray().toString(Charsets.UTF_8)}</ivs>
+<ivs>${
+        ubyteArrayOf(0xE9U, 0x82U, 0x8AU, 0xF3U, 0xA0U, 0x84U, 0x80U).toByteArray()
+            .toString(Charsets.UTF_8)
+    }</ivs>
 </resources>
     <!-- footer comment1 -->
     <!-- footer comment2 -->
+    
     """.trimIndent()
     val eventMap = mapOf(
         1 to "START_ELEMENT",
@@ -51,11 +57,15 @@ class OriginalCharactersStaxXmlParserTest: DescribeSpec({
             val parser = OriginalCharactersStaxXmlParser(xml.byteInputStream())
             while(parser.hasNext()) {
                 val event = parser.nextEvent()
-                if(event.event.isEndDocument) {
-                    println("event ${eventMap[event.event.eventType]} ${event.originalLocation}:|${event.event}||${event.originalText}|")
-                } else {
-                    println("event ${eventMap[event.event.eventType]} ${event.originalLocation}:|${event.event}|${xml.substring(event.originalLocation)}|${event.originalText}|")
-                }
+                val b = StringWriter()
+                event.event.writeAsEncodedUnicode(b)
+                println(
+                    "event ${eventMap[event.event.eventType]} ${event.originalLocation}:|$b|${
+                        xml.substring(
+                            event.originalLocation
+                        )
+                    }|${event.originalText}|"
+                )
             }
         }
     }
