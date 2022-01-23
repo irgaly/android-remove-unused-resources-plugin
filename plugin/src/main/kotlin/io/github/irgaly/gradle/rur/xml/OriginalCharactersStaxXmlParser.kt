@@ -6,6 +6,7 @@ import io.github.irgaly.gradle.rur.io.CloneableInputStream
 import org.codehaus.stax2.XMLInputFactory2.P_AUTO_CLOSE_INPUT
 import org.codehaus.stax2.XMLInputFactory2.P_REPORT_PROLOG_WHITESPACE
 import org.codehaus.stax2.evt.XMLEvent2
+import java.io.Closeable
 import java.io.InputStream
 import java.io.InputStreamReader
 import javax.xml.stream.XMLInputFactory.*
@@ -13,7 +14,7 @@ import javax.xml.stream.XMLInputFactory.*
 /**
  * preserve original characters XML StAX Parser
  */
-class OriginalCharactersStaxXmlParser(input: InputStream) {
+class OriginalCharactersStaxXmlParser(input: InputStream) : Closeable {
     private val originalReader: InputStreamReader
     private val reader: WstxEventReader
 
@@ -29,6 +30,10 @@ class OriginalCharactersStaxXmlParser(input: InputStream) {
             setProperty(IS_REPLACING_ENTITY_REFERENCES, false)
             setProperty(IS_SUPPORTING_EXTERNAL_ENTITIES, false)
         }.createXMLEventReader(cloneable) as WstxEventReader
+    }
+
+    fun peek(): XMLEvent2? {
+        return (reader.peek() as? XMLEvent2)
     }
 
     fun hasNext(): Boolean {
@@ -69,7 +74,7 @@ class OriginalCharactersStaxXmlParser(input: InputStream) {
         }
     }
 
-    fun close() {
+    override fun close() {
         reader.close()
         originalReader.close()
     }
