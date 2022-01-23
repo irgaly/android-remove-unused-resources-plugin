@@ -17,6 +17,8 @@ class OriginalCharactersStaxXmlParser(input: InputStream) {
     private val originalReader: InputStreamReader
     private val reader: WstxEventReader
 
+    private var currentEvent: XmlEvent? = null
+
     init {
         val cloneable = CloneableInputStream(input)
         originalReader = cloneable.fork().reader()
@@ -36,17 +38,39 @@ class OriginalCharactersStaxXmlParser(input: InputStream) {
     fun nextEvent(): XmlEvent {
         val event = reader.nextEvent() as XMLEvent2
         val next = reader.peek()
+        val parent = if (event.isEndElement) {
+            currentEvent?.parent
+        } else {
+            currentEvent
+        }
         val range = if (next != null) {
             event.location.characterOffset until next.location.characterOffset
         } else {
-            // empty range
+            // empty range for EndDocument
             event.location.characterOffset until event.location.characterOffset
         }
-        val text = CharArray(range.count()).also { originalReader.read(it) }
-        return XmlEvent(
-            event,
-            range,
-            String(text)
-        )
+        val text = CharArray(range.count()).let { buffer ->
+            var loadSize = 0
+            while (loadSize < range.count()) {
+                val result = originalReader.read(buffer)
+                if (result < 0) {
+                    break
+                }
+                loadSize += result
+            }
+            String(buffer, 0, loadSize)
+        }
+        return XmlEvent(event, parent, range, text).also {
+            if (event.isStartElement) {
+                currentEvent = it
+            } else if (event.isEndElement) {
+                currentEvent = it.parent
+            }
+        }
+    }
+
+    fun close() {
+        reader.close()
+        originalReader.close()
     }
 }
