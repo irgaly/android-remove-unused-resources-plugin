@@ -195,8 +195,10 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                         }
 
                         if (remainResources) {
-                            // update resource file
-                            targetFile.writeText(output.toString())
+                            if (!isDryRun) {
+                                // update resource file
+                                targetFile.writeText(output.toString())
+                            }
                         } else {
                             // delete empty resource file
                             logger.lifecycle("${dryRunMarker}delete resource file because of empty: $targetFile")
