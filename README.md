@@ -225,7 +225,7 @@ removeUnusedResource {
   excludeIdPatterns = listOf("R\\..*exclude_pattern.*")
   // glob expression exclude file.
   // file path is relative path from Project's root directory
-  excludeFiles = listOf("**/values/exclude_colors.xml")
+  excludeFilePatterns = listOf("**/values/exclude_colors.xml")
 }
 ```
 

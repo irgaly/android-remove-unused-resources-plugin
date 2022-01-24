@@ -8,5 +8,5 @@ abstract class RemoveUnusedResourcesExtension {
     var lintResultXml: File? = null
     var excludeIds: List<String> = emptyList()
     var excludeIdPatterns: List<String> = emptyList()
-    var excludeFiles: List<String> = emptyList()
+    var excludeFilePatterns: List<String> = emptyList()
 }

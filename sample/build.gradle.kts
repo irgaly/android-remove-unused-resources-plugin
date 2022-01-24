@@ -27,7 +27,7 @@ removeUnusedResource {
     //lintResultXml = file("${buildDir}/reports/lint-results-debug.xml")
     excludeIds = listOf("R.color.unused_exclude_color")
     excludeIdPatterns = listOf("R\\..*exclude_pattern.*")
-    excludeFiles = listOf("**/values/exclude_colors.xml")
+    excludeFilePatterns = listOf("**/values/exclude_colors.xml")
 }
 
 dependencies {
