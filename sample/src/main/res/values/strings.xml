@@ -1,3 +1,15 @@
+<!-- header comment -->
 <resources>
     <string name="app_name">Plugin Sample</string>
+    <string name="unused_string">unused</string>
+    <string name="empty1" />
+    <string name="empty2"></string>
+    <string name="character_reference">© = &#169;</string>
+    <string name="grater_than">&gt; = ></string>
+    <string name="amp">&amp;</string>
+    <string name="apos">\'</string>
+    <string name="cdata"><![CDATA[cdata]]></string>
+    <string name="surrogate">🚭 = &#x1F6AD;</string>
+    <string name="ivs">邊󠄀</string>
 </resources>
+<!-- footer comment -->
