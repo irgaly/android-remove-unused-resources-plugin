@@ -93,7 +93,7 @@ delete resource file because of empty: /src/app/src/main/res/values-night/colors
 delete resource element: R.color.usused_color_with_night_theme in /src/app/src/main/res/values/colors.xml
 ```
 
-modifying exmaple:
+modified XML exmaple:
 
 Only modifies unused resource tag, preserve others (XML indent, spaces, special reference characters...) as it is.
 
