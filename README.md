@@ -16,13 +16,13 @@ This is useful for CI because that is provided by gradle task.
     in https://developer.android.com/guide/topics/resources/providing-resources#ResourceTypes
   * Support alternative resources (`-<qualifier>`: ex, values-night, drawable-hdpi, values-v26...)
   * Support 9-patch drawable files detection.
-* Fast
-  * It is fast task because this plugin executes only deleting resource tags or files.
-    * Android Lint task may takes long time than this plugin takes :innocent:
 * Preserve original characters in XML
   * This plugin can delete unused XML element without modifying other characters and XML structures.
     * example: don't extract `&#{unicode};`, don't replace `>` with `&gt;`, don't replace XML empty
       tag...
+* Fast
+  * It is fast task because this plugin executes only deleting resource tags or files.
+    * Android Lint task may takes long time than this plugin takes :innocent:
 
 # Requires
 
