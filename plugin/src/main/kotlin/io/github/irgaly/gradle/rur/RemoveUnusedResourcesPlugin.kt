@@ -2,9 +2,11 @@ package io.github.irgaly.gradle.rur
 
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.internal.lint.AndroidLintTask
+import io.github.irgaly.gradle.rur.extensions.afterEvaluateOrExecute
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.io.File
+
 
 class RemoveUnusedResourcesPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -33,8 +35,8 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
         val hasOverrideLintOptions =
             (onlyUnusedResources || disableLintConfig || (overrideLintConfig != null))
         if (hasOverrideLintOptions) {
-            target.allprojects.forEach { project ->
-                project.afterEvaluate {
+            target.rootProject.allprojects.forEach { project ->
+                project.afterEvaluateOrExecute {
                     project.extensions.findByType(BaseExtension::class.java)?.lintOptions?.apply {
                         if (onlyUnusedResources) {
                             if (project == target) {
