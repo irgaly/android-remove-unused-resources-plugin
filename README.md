@@ -93,6 +93,23 @@ delete resource file because of empty: /src/app/src/main/res/values-night/colors
 delete resource element: R.color.usused_color_with_night_theme in /src/app/src/main/res/values/colors.xml
 ```
 
+modifying exmaple:
+
+Only modifies unused resource tag, preserve others (XML indent, spaces, special reference characters...) as it is.
+
+```diff
+--- a/sample/src/main/res/values/strings.xml
++++ b/sample/src/main/res/values/strings.xml
+@@ -1,7 +1,6 @@
+ <!-- header comment -->
+ <resources>
+     <string name="app_name">Plugin Sample</string>
+-    <string name="unused_string">unused</string>
+     <string name="empty1" />
+     <string name="empty2"></string>
+     <string name="character_reference">© = &#169;</string>
+```
+
 ## Run lint only for `UnusedResources`
 
 This plugin provides simple utility for lint, that overrides lint options.
