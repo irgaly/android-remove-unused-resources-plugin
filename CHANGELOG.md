@@ -1,3 +1,11 @@
+# v1.1.0 - 2022/01/24
+
+Preserve XML characters.
+
+## Fix
+
+* Preserve XML special characters, unicode references, empty tags when deleting values resources.
+
 # v1.0.0 - 2022/01/21
 
 First Stable release.

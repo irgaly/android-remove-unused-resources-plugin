@@ -19,11 +19,10 @@ This is useful for CI because that is provided by gradle task.
 * Fast
   * It is fast task because this plugin executes only deleting resource tags or files.
     * Android Lint task may takes long time than this plugin takes :innocent:
-
-To be FIX List:
-
-* preserve original xml string such as comment tags, spaces, character codes reference and XML
-  special characters.
+* Preserve original characters in XML
+  * This plugin can delete unused XML element without modifying other characters and XML structures.
+    * example: don't extract `&#{unicode};`, don't replace `>` with `&gt;`, don't replace XML empty
+      tag...
 
 # Requires
 
@@ -55,7 +54,7 @@ Apply the plugin to your app module.
 
 ```kotlin
 plugins {
-  id("io.github.irgaly.remove-unused-resources") version "1.0.0"
+  id("io.github.irgaly.remove-unused-resources") version "1.1.0"
 }
 ```
 
