@@ -64,9 +64,11 @@ Ensure your lintOptions is correctly set for `UnusedResources` rule.
 
 * `isCheckGeneratedSources = true` is required, if you use code generation such as DataBinding or
   Epoxy.
+  * This is required to each projects that uses code generation.
 * `isCheckDependencies = true` is required, if you use multi module project.
   * This option let lint to analyze all resources in all module.
   * This option is default to true since AGP 7.1.0.
+  * This is required only in app project.
 
 `app/build.gradle.kts`
 
@@ -77,6 +79,15 @@ lintOptions {
   isCheckGeneratedSources = true
   // for multi module. This is default to true since AGP 7.1.0
   isCheckDependencies = true
+}
+```
+
+`othermodule/build.gradle.kts`
+
+```kotlin
+lintOptions {
+  // if a module uses code generation, this is required each project.
+  isCheckGeneratedSources = true
 }
 ```
 
@@ -136,9 +147,9 @@ The `-Prur.lint.onlyUnusedResources` overrides lint options by settings below:
 lintOptions {
   // These settings are applied automatically by the plugin, when -Prur.lint.onlyUnusedResources is specified,
   // so you don't have to add these settings in build.gradle.kts.
-  xmlReport = true
+  xmlReport = true // only app project
+  isCheckDependencies = true // only app project
   isCheckGeneratedSources = true
-  isCheckDependencies = true
   checkOnly.clear()
   checkOnly("UnusedResources")
   warning("UnusedResources")
