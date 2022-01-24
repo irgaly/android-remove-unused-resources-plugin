@@ -55,7 +55,7 @@ Apply the plugin to your app module.
 
 ```kotlin
 plugins {
-  id("io.github.irgaly.remove-unused-resources") version "1.0.0"
+  id("io.github.irgaly.remove-unused-resources") version "1.1.0"
 }
 ```
 
