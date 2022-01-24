@@ -1,3 +1,9 @@
+# v1.1.1 - 2022/01/24
+
+## FIX
+
+* Cannot apply lintConfig overriding to all projects.
+
 # v1.1.0 - 2022/01/24
 
 Preserve XML characters.
