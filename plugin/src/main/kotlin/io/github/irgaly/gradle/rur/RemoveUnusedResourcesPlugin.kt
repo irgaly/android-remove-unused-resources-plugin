@@ -41,9 +41,9 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
                         if (onlyUnusedResources) {
                             if (project == target) {
                                 xmlReport = true
-                                isCheckGeneratedSources = true
                                 isCheckDependencies = true
                             }
+                            isCheckGeneratedSources = true
                             checkOnly.clear()
                             checkOnly("UnusedResources")
                             warning("UnusedResources")
