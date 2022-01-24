@@ -1,16 +1,16 @@
 # v1.2.0 - 2022/01/24
 
-## Changes
+### Changes
 
 * rename excludeFiles option to excludeFilePatterns
 
-## FIX
+### Fixes
 
 * add lintOptions.isCheckGeneratedSources for rur.lint.onlyUnusedResources
 
 # v1.1.1 - 2022/01/24
 
-## FIX
+### Fixes
 
 * Cannot apply lintConfig overriding to all projects.
 
@@ -18,7 +18,7 @@
 
 Preserve XML characters.
 
-## Fix
+### Fixes
 
 * Preserve XML special characters, unicode references, empty tags when deleting values resources.
 
@@ -26,11 +26,11 @@ Preserve XML characters.
 
 First Stable release.
 
-## Feature
+### Feature
 
 * Support exclude options: excludeResourceIds, excludeResourceIdPatterns, excludeFiles
 
-## Changes
+### Changes
 
 * change rur.lintOptionsOnlyUnusedResources to rur.lint.onlyUnusedResources
 * change rur.disableLintConfig to rur.lint.disableLintConfig
@@ -38,29 +38,29 @@ First Stable release.
 
 # v0.9.2 - 2022/01/20
 
-## Feature
+### Feature
 
 * Add rur.disableLintConfig option.
 
-## Changes
+### Changes
 
 * Don't remove resources outside of rootProject directory for safety.
 
-## FIX
+### Fixes
 
 * lintOptionsOnlyUnusedResources option affects to all subprojects.
 * removeUnusedResources must run after other lint tasks for one liner
 
 # v0.9.1 - 2022/01/18
 
-## Changes
+### Changes
 
 * Use default variant (lint-results-{default variant}.xml) if both of lintVariant and lintResultXml
   are not specified.
   * in 0.9.0, it uses lint-results.xml.
 * Don't delete resources outside of Gradle rootProject.
 
-## Fixes
+### Fixes
 
 * Fail gradle commands, if any errors occurred.
 
