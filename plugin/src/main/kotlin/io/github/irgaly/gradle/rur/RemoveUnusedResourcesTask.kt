@@ -3,7 +3,7 @@ package io.github.irgaly.gradle.rur
 import io.github.irgaly.gradle.rur.extensions.containsInDescendants
 import io.github.irgaly.gradle.rur.extensions.getAttributeText
 import io.github.irgaly.gradle.rur.extensions.getElements
-import io.github.irgaly.gradle.rur.extensions.toSequence
+import io.github.irgaly.gradle.rur.xml.getAttributeValue
 import org.gradle.api.DefaultTask
 import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
@@ -12,14 +12,11 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
-import org.w3c.dom.Text
 import java.io.File
 import java.io.StringWriter
 import java.nio.file.FileSystems
+import javax.xml.namespace.QName
 import javax.xml.parsers.DocumentBuilderFactory
-import javax.xml.transform.TransformerFactory.newInstance
-import javax.xml.transform.dom.DOMSource
-import javax.xml.transform.stream.StreamResult
 
 abstract class RemoveUnusedResourcesTask : DefaultTask() {
     @get:Optional
@@ -154,77 +151,57 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                             "array" -> listOf("array", "integer-array", "string-array")
                             else -> listOf(resourceType)
                         }
-                        val document = DocumentBuilderFactory.newInstance().apply {
-                            isNamespaceAware = true
-                        }.newDocumentBuilder().parse(targetFile)
-                        val root = document.documentElement
-                        val target = root.childNodes.toSequence().firstOrNull {
-                            it.nodeName in tagNames && it.getAttributeText("name")
-                                ?.replace(".", "_") == resourceId
+                        var skipOverride = false
+                        var remainResources = false
+                        val converter = XmlConverter { startElementEvent ->
+                            if (startElementEvent.level == 1) {
+                                // only check root <resources>'s child elements
+                                val target = startElementEvent.event.asStartElement()
+                                val tagName = target.name.toString()
+                                val attribute = target.getAttributeValue("name")
+                                val delete = if (
+                                    tagName in tagNames &&
+                                    attribute?.replace(".", "_") == resourceId
+                                ) {
+                                    val overrideName = QName(
+                                        "http://schemas.android.com/tools",
+                                        "override"
+                                    )
+                                    val override =
+                                        (target.getAttributeValue(overrideName) == "true")
+                                    if (override) {
+                                        skipOverride = true
+                                    }
+                                    !override
+                                } else false
+                                if (!delete) {
+                                    remainResources = true
+                                }
+                                delete
+                            } else false
                         }
-                        if (target == null) {
-                            if (originalTargetFile == targetFile) {
+                        val output = StringWriter()
+                        val result = converter.convert(targetFile.inputStream(), output)
+                        when {
+                            skipOverride -> {
+                                logger.lifecycle("skip because it has tools:override: $resourceName in $targetFile")
+                            }
+                            result.removed.isNotEmpty() -> {
+                                logger.lifecycle("${dryRunMarker}delete resource element: $resourceName in $targetFile")
+                            }
+                            (originalTargetFile == targetFile) -> {
                                 logger.warn("resource not found: $resourceName in $targetFile")
                             }
-                            return@forEach
                         }
-                        if (target.attributes?.getNamedItemNS(
-                                "http://schemas.android.com/tools",
-                                "override"
-                            )?.nodeValue == "true"
-                        ) {
-                            logger.lifecycle("skip because it has tools:override: $resourceName in $targetFile")
-                            return@forEach
-                        }
-                        logger.lifecycle("${dryRunMarker}delete resource element: $resourceName in $targetFile")
-                        val targetIndex = root.childNodes.toSequence().indexOf(target)
-                        val beforeText = (root.childNodes.item(targetIndex - 1) as? Text)
-                        val afterText = (root.childNodes.item(targetIndex + 1) as? Text)
-                        if (beforeText != null && afterText != null &&
-                            Regex("(\r\n|\\v)\\h*$").containsMatchIn(beforeText.textContent)
-                            && Regex("^\\h*(\r\n|\\v)").containsMatchIn(afterText.textContent)
-                        ) {
-                            // delete target and lines
-                            beforeText.textContent =
-                                Regex("\\h*$").replace(beforeText.textContent, "")
-                            afterText.textContent =
-                                Regex("^\\h*(\r\n|\\v)").replace(afterText.textContent, "")
-                        } else if (afterText != null) {
-                            // delete target and after blanks
-                            afterText.textContent =
-                                Regex("^\\h*").replace(afterText.textContent, "")
-                        }
-                        root.removeChild(target)
-                        if (root.childNodes.toSequence().all { it is Text }) {
+
+                        if (remainResources) {
+                            // update resource file
+                            targetFile.writeText(output.toString())
+                        } else {
                             // delete empty resource file
                             logger.lifecycle("${dryRunMarker}delete resource file because of empty: $targetFile")
                             if (!isDryRun) {
                                 targetFile.delete()
-                            }
-                        } else {
-                            // update resource file
-                            val xmlText = targetFile.readText()
-                            val header = Regex(
-                                "^(.*?)<resources.*$",
-                                RegexOption.DOT_MATCHES_ALL
-                            ).matchEntire(xmlText)?.groupValues?.get(1)
-                            val footer = Regex(
-                                "^.*</resources>(.*?)$",
-                                RegexOption.DOT_MATCHES_ALL
-                            ).matchEntire(xmlText)?.groupValues?.get(1)
-                            if (header == null || footer == null) {
-                                error("cannot parse resources xml header / footer: $header / $footer")
-                            }
-                            val outputText = StringWriter()
-                            newInstance().newTransformer()
-                                .transform(DOMSource(document), StreamResult(outputText))
-                            val outputXml = Regex(
-                                "^.*?(<resources.*</resources>).*?$",
-                                RegexOption.DOT_MATCHES_ALL
-                            ).matchEntire(outputText.toString())?.groupValues?.get(1)
-                                ?: error("cannot parse output xml")
-                            if (!isDryRun) {
-                                targetFile.writeText("$header$outputXml$footer")
                             }
                         }
                     } else {

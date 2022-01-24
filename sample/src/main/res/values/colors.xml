@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -10,4 +10,5 @@
     <color name="unused_color_with_night_theme">#FFFFFF</color>
     <color name="unused_exclude_color">#FFFFFF</color>
     <color name="unused_exclude_pattern_color">#FFFFFF</color>
+    <color name="unused_override" tools:override="true">#FFFFFF</color>
 </resources>
