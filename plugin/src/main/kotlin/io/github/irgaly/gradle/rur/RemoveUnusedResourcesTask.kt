@@ -41,7 +41,7 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
 
     @get:Optional
     @get:Input
-    abstract val excludeFiles: ListProperty<String>
+    abstract val excludeFilePatterns: ListProperty<String>
 
     @Suppress("LABEL_NAME_CLASH") // for using: return@forEach
     @TaskAction
@@ -64,7 +64,7 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
         val excludeResourceNamePatterns =
             (excludeIdPatterns.orNull?.map { it.toRegex() } ?: emptyList())
         val excludeFileMatchers = FileSystems.getDefault().let { fileSystem ->
-            excludeFiles.orNull?.map {
+            excludeFilePatterns.orNull?.map {
                 fileSystem.getPathMatcher("glob:$it")
             } ?: emptyList()
         }
