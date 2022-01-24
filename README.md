@@ -127,6 +127,7 @@ lintOptions {
   // These settings are applied automatically by the plugin, when -Prur.lint.onlyUnusedResources is specified,
   // so you don't have to add these settings in build.gradle.kts.
   xmlReport = true
+  isCheckGeneratedSources = true
   isCheckDependencies = true
   checkOnly.clear()
   checkOnly("UnusedResources")
