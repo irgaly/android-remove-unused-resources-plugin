@@ -1,3 +1,13 @@
+# v1.2.0 - 2022/01/24
+
+## Changes
+
+* rename excludeFiles option to excludeFilePatterns
+
+## FIX
+
+* add lintOptions.isCheckGeneratedSources for rur.lint.onlyUnusedResources
+
 # v1.1.1 - 2022/01/24
 
 ## FIX

@@ -8,6 +8,8 @@ This is useful for CI because that is provided by gradle task.
 
 * This plugin uses Android Lint results xml file for detect unused resources.
   * It supports multi module Android project, because of using Android Lint.
+  * It supports generated sources like DataBinding, Epoxy...
+    * Android Lint supports them by isCheckGeneratedSources option.
 * This plugin provides gradle task.
   * It is suitable to run in CI action.
   * It is equivalent to Android Studio's `Refactor > Remove Unused Resources...` action.
@@ -54,18 +56,26 @@ Apply the plugin to your app module.
 
 ```kotlin
 plugins {
-  id("io.github.irgaly.remove-unused-resources") version "1.1.1"
+  id("io.github.irgaly.remove-unused-resources") version "1.2.0"
 }
 ```
 
-When using AGP 7.0.4 or lower, ensure `isCheckDependencies = true` for multi module project. This
-option let lint to analyze all resources in all module.
+Ensure your lintOptions is correctly set for `UnusedResources` rule.
+
+* `isCheckGeneratedSources = true` is required, if you use code generation such as DataBinding or
+  Epoxy.
+* `isCheckDependencies = true` is required, if you use multi module project.
+  * This option let lint to analyze all resources in all module.
+  * This option is default to true since AGP 7.1.0.
 
 `app/build.gradle.kts`
 
 ```kotlin
 lintOptions {
-  // if AGP version is 7.1.0 or higher, isCheckDependencies is default to true
+  // isCheckGeneratedSources is slow down Android Lint analysing.
+  // It is recommended to disable this when you analyse other lint rules but UnusedResources rule.
+  isCheckGeneratedSources = true
+  // for multi module. This is default to true since AGP 7.1.0
   isCheckDependencies = true
 }
 ```
