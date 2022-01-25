@@ -76,9 +76,11 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
         if (lintResultDocument.tagName != "issues") {
             error("root tag is not \"issues\": ${lintResultDocument.tagName}")
         }
+        var lintResultUnusedResourcesIssueCount = 0
         lintResultDocument.getElements("issue")
             .filter { it.getAttributeText("id") == "UnusedResources" }
             .forEach { issue ->
+                lintResultUnusedResourcesIssueCount++
                 val message = issue.getAttributeText("message")
                     ?: error("message attribute is missing: $issue")
                 val matchedResource =
@@ -217,6 +219,9 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                     }
                 }
             }
+        if (lintResultUnusedResourcesIssueCount == 0) {
+            logger.lifecycle("Lint Report has no UnusedResources issues: $lintResultFile")
+        }
     }
 
     /**
