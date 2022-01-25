@@ -241,12 +241,12 @@ removeUnusedResource {
   // default: not specified (use {buildDir}/reports/lint-results-{default variant}.xml) in AGP 7.0.0 or upper
   lintResultXml = file("$buildDir/reports/lint-results-debug.xml")
   // exclude resource Id list. match rule: entire match
-  excludeIds = listOf("R.color.unused_exclude_color")
+  excludeIds("R.color.unused_exclude_color")
   // regular expression exclude resource Id list. match rule: regular expression entire match
-  excludeIdPatterns = listOf("R\\..*exclude_pattern.*")
+  excludeIdPatterns("R\\..*exclude_pattern.*")
   // glob expression exclude file.
   // file path is relative path from Project's root directory
-  excludeFilePatterns = listOf("**/values/exclude_colors.xml")
+  excludeFilePatterns("**/values/exclude_colors.xml")
 }
 ```
 
