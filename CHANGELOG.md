@@ -1,3 +1,27 @@
+# v1.3.0 - 2022/01/25
+
+### Improvements
+
+* [#35](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/35) Add KDoc to
+  Extension
+* [#37](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/37) Add information
+  log when no UnusedResources issues found in lint results.
+
+### Changes
+
+* [#35](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/35) Configuration
+  Syntax changed.
+
+use setter functions to set option.
+
+```kotlin
+removeUnusedResource {
+  excludeIds("R.color.unused_exclude_color")
+  excludeIdPatterns("R\\..*exclude_pattern.*")
+  excludeFilePatterns("**/values/exclude_colors.xml")
+}
+```
+
 # v1.2.0 - 2022/01/24
 
 ### Changes
