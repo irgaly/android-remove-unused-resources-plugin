@@ -233,17 +233,22 @@ removeUnusedResource {
   // for dry run
   // default: false
   dryRun = true
+
   // specify lint target variant for result xml file detection
   // if lintResultXml is set, lintVariant is ignored.
   // default: not specified (use {buildDir}/reports/lint-results-{default variant}.xml) in AGP 7.0.0 or upper
   lintVariant = "debug"
+
   // specify lint result xml directly
   // default: not specified (use {buildDir}/reports/lint-results-{default variant}.xml) in AGP 7.0.0 or upper
   lintResultXml = file("$buildDir/reports/lint-results-debug.xml")
+
   // exclude resource Id list. match rule: entire match
   excludeIds("R.color.unused_exclude_color")
+
   // regular expression exclude resource Id list. match rule: regular expression entire match
   excludeIdPatterns("R\\..*exclude_pattern.*")
+
   // glob expression exclude file.
   // file path is relative path from Project's root directory
   excludeFilePatterns("**/values/exclude_colors.xml")
