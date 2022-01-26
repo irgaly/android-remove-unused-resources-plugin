@@ -77,6 +77,7 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
             error("root tag is not \"issues\": ${lintResultDocument.tagName}")
         }
         var lintResultUnusedResourcesIssueCount = 0
+        val issueTargets: MutableList<IssueTarget> = mutableListOf()
         lintResultDocument.getElements("issue")
             .filter { it.getAttributeText("id") == "UnusedResources" }
             .forEach { issue ->
@@ -111,120 +112,140 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                 val resourceDirectory = originalTargetFile.parentFile.parentFile
                 val isValuesResource =
                     Regex("values(-.+)?").matches(originalTargetFile.parentFile.name)
-                val directoryName = if (isValuesResource) "values" else resourceType
-                val targetDirectories = resourceDirectory.listFiles()?.filter {
-                    Regex("$directoryName(-.+)?").matches(it.name)
-                } ?: emptyList()
-                if (isValuesResource) {
-                    targetDirectories.flatMap { directory ->
-                        directory.listFiles()?.filter {
-                            it.name.endsWith(".xml")
-                        } ?: emptyList()
-                    }.let {
-                        listOf(originalTargetFile).union(it).toList()
-                    }.filterNot { targetFile ->
-                        // ignore exclude file
-                        excludeFileMatchers.any {
-                            it.matches(targetFile.relativeTo(project.rootDir).toPath())
-                        }
-                    }.forEach { targetFile ->
-                        if ((originalTargetFile == targetFile) && !targetFile.exists()) {
-                            logger.warn("target file is not exist: $targetFile")
-                            return@forEach
-                        }
-                        // remove resource element
-                        val tagNames = when (resourceType) {
-                            "array" -> listOf("array", "integer-array", "string-array")
-                            else -> listOf(resourceType)
-                        }
-                        var skipOverride = false
-                        var remainResources = false
-                        val converter = XmlConverter { startElementEvent ->
-                            if (startElementEvent.level == 1) {
-                                // only check root <resources>'s child elements
-                                val target = startElementEvent.event.asStartElement()
-                                val tagName = target.name.toString()
-                                val attribute = target.getAttributeValue("name")
-                                val delete = if (
-                                    tagName in tagNames &&
-                                    attribute?.replace(".", "_") == resourceId
-                                ) {
-                                    val overrideName = QName(
-                                        "http://schemas.android.com/tools",
-                                        "override"
-                                    )
-                                    val override =
-                                        (target.getAttributeValue(overrideName) == "true")
-                                    if (override) {
-                                        skipOverride = true
-                                    }
-                                    !override
-                                } else false
-                                if (!delete) {
-                                    remainResources = true
-                                }
-                                delete
-                            } else false
-                        }
-                        val output = StringWriter()
-                        val result = converter.convert(targetFile.inputStream(), output)
-                        when {
-                            skipOverride -> {
-                                logger.lifecycle("skip because it has tools:override: $resourceName in $targetFile")
-                            }
-                            result.removed.isNotEmpty() -> {
-                                logger.lifecycle("${dryRunMarker}delete resource element: $resourceName in $targetFile")
-                            }
-                            (originalTargetFile == targetFile) -> {
-                                logger.warn("resource not found: $resourceName in $targetFile")
-                            }
-                        }
-
-                        if (remainResources) {
-                            if (!isDryRun) {
-                                // update resource file
-                                targetFile.writeText(output.toString())
-                            }
-                        } else {
-                            // delete empty resource file
-                            logger.lifecycle("${dryRunMarker}delete resource file because of empty: $targetFile")
-                            if (!isDryRun) {
-                                targetFile.delete()
-                            }
-                        }
-                    }
-                } else {
-                    val targetFiles = targetDirectories.flatMap { directory ->
-                        directory.listFiles()?.filter {
-                            (Regex("\\.9$").replace(it.nameWithoutExtension, "") == resourceId)
-                        } ?: emptyList()
-                    }.let { listOf(originalTargetFile).union(it).toList() }
-                    // ignore resource if any file is matched
-                    if (targetFiles.any { targetFile ->
-                            excludeFileMatchers.any {
-                                it.matches(targetFile.relativeTo(project.rootDir).toPath())
-                            }
-                        }) {
-                        logger.debug("ignore because exclude file matched: $resourceName")
-                        return@forEach
-                    }
-                    targetFiles.forEach { targetFile ->
-                        if ((originalTargetFile == targetFile) && !targetFile.exists()) {
-                            logger.warn("target file is not exist: $targetFile")
-                            return@forEach
-                        }
-                        // delete resource file
-                        // target: R.animator, R.anim, R.color, R.drawable, R.mipmap,
-                        // R.layout, R.menu, R.raw, R.xml, R.font
-                        logger.lifecycle("${dryRunMarker}delete resource file: $targetFile")
-                        if (!isDryRun) {
-                            targetFile.delete()
-                        }
-                    }
-                }
+                issueTargets.add(
+                    IssueTarget(
+                        IssueTargetGroup(isValuesResource, resourceDirectory),
+                        resourceName,
+                        resourceType,
+                        resourceId,
+                        originalTargetFile
+                    )
+                )
             }
         if (lintResultUnusedResourcesIssueCount == 0) {
             logger.lifecycle("Lint Report has no UnusedResources issues: $lintResultFile")
+        }
+        val groupedIssueTargets = issueTargets.groupBy { it.group }
+        groupedIssueTargets.filter { it.key.isValuesResource }.forEach { (issueGroup, issues) ->
+            val originalTargetFiles = issues.map { it.originalTargetFile }.distinct().toSet()
+            issueGroup.resourceDirectory.listFiles()?.filter {
+                Regex("values(-.+)?").matches(it.name)
+            }?.flatMap { directory ->
+                directory.listFiles()?.filter {
+                    it.name.endsWith(".xml")
+                } ?: emptyList()
+            }.let { targetFiles ->
+                originalTargetFiles.union(targetFiles ?: emptyList()).toList()
+            }.filterNot { targetFile ->
+                // ignore exclude file
+                excludeFileMatchers.any {
+                    it.matches(targetFile.relativeTo(project.rootDir).toPath())
+                }
+            }.forEach { targetFile ->
+                if ((targetFile in originalTargetFiles) && !targetFile.exists()) {
+                    logger.warn("target file is not exist: $targetFile")
+                    return@forEach
+                }
+                // remove resource element
+                val removed: MutableSet<IssueTarget> = mutableSetOf()
+                val skipped: MutableSet<IssueTarget> = mutableSetOf()
+                var remainResources = false
+                val converter = XmlConverter { startElementEvent ->
+                    var remove = false
+                    if (startElementEvent.level == 1) {
+                        // only check root <resources>'s child elements
+                        val target = startElementEvent.event.asStartElement()
+                        val tagName = target.name.toString()
+                        val attribute = target.getAttributeValue("name")
+                        val resourceId = attribute?.replace(".", "_")
+                        val issue = issues.firstOrNull { issue ->
+                            tagName in when (issue.resourceType) {
+                                "array" -> listOf("array", "integer-array", "string-array")
+                                else -> listOf(issue.resourceType)
+                            } && resourceId == issue.resourceId
+                        }
+                        if (issue != null) {
+                            val overrideName = QName(
+                                "http://schemas.android.com/tools",
+                                "override"
+                            )
+                            if (target.getAttributeValue(overrideName) == "true") {
+                                skipped.add(issue)
+                            } else {
+                                remove = true
+                                removed.add(issue)
+                            }
+                        }
+                        if (!remove) {
+                            remainResources = true
+                        }
+                    }
+                    XmlConverter.Operation(remove)
+                }
+                val output = StringWriter()
+                converter.convert(targetFile.inputStream(), output)
+                issues.forEach { issue ->
+                    when {
+                        issue in skipped -> {
+                            logger.lifecycle("skip because it has tools:override: ${issue.resourceName} in $targetFile")
+                        }
+                        issue in removed -> {
+                            logger.lifecycle("${dryRunMarker}delete resource element: ${issue.resourceName} in $targetFile")
+                        }
+                        (issue.originalTargetFile == targetFile) -> {
+                            logger.warn("resource not found: ${issue.resourceName} in $targetFile")
+                        }
+                    }
+                }
+                if (remainResources) {
+                    if (!isDryRun) {
+                        // update resource file
+                        targetFile.writeText(output.toString())
+                    }
+                } else {
+                    // delete empty resource file
+                    logger.lifecycle("${dryRunMarker}delete resource file because of empty: $targetFile")
+                    if (!isDryRun) {
+                        targetFile.delete()
+                    }
+                }
+            }
+        }
+        groupedIssueTargets.filter { !it.key.isValuesResource }.forEach { (issueGroup, issues) ->
+            issues.forEach { issue ->
+                val targetFiles = issueGroup.resourceDirectory.listFiles()?.filter {
+                    Regex("${issue.resourceType}(-.+)?").matches(it.name)
+                }?.flatMap { directory ->
+                    directory.listFiles()?.filter {
+                        (Regex("\\.9$").replace(
+                            it.nameWithoutExtension,
+                            ""
+                        ) == issue.resourceId)
+                    } ?: emptyList()
+                }.let { listOf(issue.originalTargetFile).union(it ?: emptyList()).toList() }
+                // ignore resource if any file is matched
+                if (targetFiles.any { targetFile ->
+                        excludeFileMatchers.any {
+                            it.matches(targetFile.relativeTo(project.rootDir).toPath())
+                        }
+                    }) {
+                    logger.debug("ignore because exclude file matched: ${issue.resourceName}")
+                    return@forEach
+                }
+                targetFiles.forEach { targetFile ->
+                    if ((issue.originalTargetFile == targetFile) && !targetFile.exists()) {
+                        logger.warn("target file is not exist: $targetFile")
+                        return@forEach
+                    }
+                    // delete resource file
+                    // target: R.animator, R.anim, R.color, R.drawable, R.mipmap,
+                    // R.layout, R.menu, R.raw, R.xml, R.font
+                    logger.lifecycle("${dryRunMarker}delete resource file: $targetFile")
+                    if (!isDryRun) {
+                        targetFile.delete()
+                    }
+                }
+            }
         }
     }
 
@@ -245,4 +266,17 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
             } else null
         }
     }
+
+    private data class IssueTargetGroup(
+        val isValuesResource: Boolean,
+        val resourceDirectory: File
+    )
+
+    private data class IssueTarget(
+        val group: IssueTargetGroup,
+        val resourceName: String,
+        val resourceType: String,
+        val resourceId: String,
+        val originalTargetFile: File
+    )
 }

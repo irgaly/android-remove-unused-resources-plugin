@@ -6,7 +6,7 @@ import java.io.InputStream
 import java.io.Writer
 
 class XmlConverter(
-    val removeElementCondition: (startElementEvent: XmlEvent) -> Boolean
+    val onStartElement: (startElementEvent: XmlEvent) -> Operation
 ) {
     fun convert(input: InputStream, output: Writer): Result {
         val removed = mutableListOf<XmlEvent>()
@@ -15,7 +15,8 @@ class XmlConverter(
             while (parser.hasNext()) {
                 val event = parser.nextEvent()
                 if (event.event.isStartElement) {
-                    if (removeElementCondition(event)) {
+                    val operation = onStartElement(event)
+                    if (operation.remove) {
                         removed.add(event)
                         // skip to end element
                         while (parser.hasNext()) {
@@ -54,7 +55,11 @@ class XmlConverter(
         return Result(removed.toList())
     }
 
-    data class Result(
+    data class Operation(
+        val remove: Boolean = false
+    )
+
+    class Result(
         val removed: List<XmlEvent>
     )
 }
