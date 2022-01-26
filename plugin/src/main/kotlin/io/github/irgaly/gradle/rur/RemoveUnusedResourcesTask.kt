@@ -184,16 +184,19 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                 }
                 val output = StringWriter()
                 converter.convert(targetFile.inputStream(), output)
+                if (skipped.isNotEmpty() || removed.isNotEmpty()) {
+                    logger.lifecycle("> report from: $targetFile")
+                }
                 issues.forEach { issue ->
                     when {
                         issue in skipped -> {
-                            logger.lifecycle("skip because it has tools:override: ${issue.resourceName} in $targetFile")
+                            logger.lifecycle("skip because it has tools:override: ${issue.resourceName}")
                         }
                         issue in removed -> {
-                            logger.lifecycle("${dryRunMarker}delete resource element: ${issue.resourceName} in $targetFile")
+                            logger.lifecycle("${dryRunMarker}delete resource element: ${issue.resourceName}")
                         }
                         (issue.originalTargetFile == targetFile) -> {
-                            logger.warn("resource not found: ${issue.resourceName} in $targetFile")
+                            logger.warn("resource not found: ${issue.resourceName}")
                         }
                     }
                 }
