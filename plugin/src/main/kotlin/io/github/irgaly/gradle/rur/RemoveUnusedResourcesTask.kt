@@ -115,39 +115,23 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                 val targetDirectories = resourceDirectory.listFiles()?.filter {
                     Regex("$directoryName(-.+)?").matches(it.name)
                 } ?: emptyList()
-                var targetFiles = targetDirectories.flatMap { directory ->
-                    directory.listFiles()?.filter {
-                        if (isValuesResource) {
-                            it.name.endsWith(".xml")
-                        } else {
-                            (Regex("\\.9$").replace(it.nameWithoutExtension, "") == resourceId)
-                        }
-                    } ?: emptyList()
-                }.let { listOf(originalTargetFile).union(it).toList() }
                 if (isValuesResource) {
-                    // ignore only exclude file
-                    targetFiles = targetFiles.filterNot { targetFile ->
+                    targetDirectories.flatMap { directory ->
+                        directory.listFiles()?.filter {
+                            it.name.endsWith(".xml")
+                        } ?: emptyList()
+                    }.let {
+                        listOf(originalTargetFile).union(it).toList()
+                    }.filterNot { targetFile ->
+                        // ignore exclude file
                         excludeFileMatchers.any {
                             it.matches(targetFile.relativeTo(project.rootDir).toPath())
                         }
-                    }
-                } else {
-                    // ignore resource if any file is matched
-                    if (targetFiles.any { targetFile ->
-                            excludeFileMatchers.any {
-                                it.matches(targetFile.relativeTo(project.rootDir).toPath())
-                            }
-                        }) {
-                        logger.debug("ignore because exclude file matched: $resourceName")
-                        return@forEach
-                    }
-                }
-                targetFiles.forEach { targetFile ->
-                    if ((originalTargetFile == targetFile) && !targetFile.exists()) {
-                        logger.warn("target file is not exist: $targetFile")
-                        return@forEach
-                    }
-                    if (isValuesResource) {
+                    }.forEach { targetFile ->
+                        if ((originalTargetFile == targetFile) && !targetFile.exists()) {
+                            logger.warn("target file is not exist: $targetFile")
+                            return@forEach
+                        }
                         // remove resource element
                         val tagNames = when (resourceType) {
                             "array" -> listOf("array", "integer-array", "string-array")
@@ -208,7 +192,27 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                                 targetFile.delete()
                             }
                         }
-                    } else {
+                    }
+                } else {
+                    val targetFiles = targetDirectories.flatMap { directory ->
+                        directory.listFiles()?.filter {
+                            (Regex("\\.9$").replace(it.nameWithoutExtension, "") == resourceId)
+                        } ?: emptyList()
+                    }.let { listOf(originalTargetFile).union(it).toList() }
+                    // ignore resource if any file is matched
+                    if (targetFiles.any { targetFile ->
+                            excludeFileMatchers.any {
+                                it.matches(targetFile.relativeTo(project.rootDir).toPath())
+                            }
+                        }) {
+                        logger.debug("ignore because exclude file matched: $resourceName")
+                        return@forEach
+                    }
+                    targetFiles.forEach { targetFile ->
+                        if ((originalTargetFile == targetFile) && !targetFile.exists()) {
+                            logger.warn("target file is not exist: $targetFile")
+                            return@forEach
+                        }
                         // delete resource file
                         // target: R.animator, R.anim, R.color, R.drawable, R.mipmap,
                         // R.layout, R.menu, R.raw, R.xml, R.font
