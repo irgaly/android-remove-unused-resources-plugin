@@ -55,15 +55,15 @@ class OriginalCharactersStaxXmlParser(input: InputStream) : Closeable {
             event.location.characterOffset until event.location.characterOffset
         }
         val text = CharArray(range.count()).let { buffer ->
-            var loadSize = 0
-            while (loadSize < range.count()) {
-                val result = originalReader.read(buffer)
+            var readSize = 0
+            while (readSize < buffer.size) {
+                val result = originalReader.read(buffer, readSize, buffer.size - readSize)
                 if (result < 0) {
                     break
                 }
-                loadSize += result
+                readSize += result
             }
-            String(buffer, 0, loadSize)
+            String(buffer, 0, readSize)
         }
         return XmlEvent(event, parent, range, text).also {
             if (event.isStartElement) {
