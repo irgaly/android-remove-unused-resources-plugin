@@ -9,7 +9,6 @@ import org.codehaus.stax2.evt.XMLEvent2
 import java.io.Closeable
 import java.io.InputStream
 import java.io.InputStreamReader
-import java.nio.CharBuffer
 import javax.xml.stream.XMLInputFactory.*
 
 /**
@@ -55,15 +54,16 @@ class OriginalCharactersStaxXmlParser(input: InputStream) : Closeable {
             // empty range for EndDocument
             event.location.characterOffset until event.location.characterOffset
         }
-        val text = CharBuffer.allocate(range.count()).let { buffer ->
-            while (buffer.hasRemaining()) {
-                val result = originalReader.read(buffer)
+        val text = CharArray(range.count()).let { buffer ->
+            var readSize = 0
+            while (readSize < buffer.size) {
+                val result = originalReader.read(buffer, readSize, buffer.size - readSize)
                 if (result < 0) {
                     break
                 }
+                readSize += result
             }
-            buffer.flip()
-            buffer.toString()
+            String(buffer, 0, readSize)
         }
         return XmlEvent(event, parent, range, text).also {
             if (event.isStartElement) {
