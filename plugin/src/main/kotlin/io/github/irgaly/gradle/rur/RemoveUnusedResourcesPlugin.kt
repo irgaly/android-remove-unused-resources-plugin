@@ -2,7 +2,7 @@ package io.github.irgaly.gradle.rur
 
 import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.internal.lint.AndroidLintTask
-import io.github.irgaly.gradle.rur.extensions.afterEvaluateOrExecute
+import io.github.irgaly.gradle.rur.extensions.finalizeAgpDsl
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.io.File
@@ -36,7 +36,7 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
             (onlyUnusedResources || disableLintConfig || (overrideLintConfig != null))
         if (hasOverrideLintOptions) {
             target.rootProject.allprojects.forEach { project ->
-                project.afterEvaluateOrExecute {
+                project.finalizeAgpDsl {
                     project.extensions.findByType(BaseExtension::class.java)?.lintOptions?.apply {
                         if (onlyUnusedResources) {
                             if (project == target) {
