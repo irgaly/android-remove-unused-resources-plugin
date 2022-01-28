@@ -1,3 +1,9 @@
+# v1.3.1 - 2022/01/28
+
+### Fixes
+
+* support AGP 7.1.0 [#43](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/43)
+
 # v1.3.0 - 2022/01/25
 
 ### Improvements
