@@ -1,9 +1,17 @@
+# v1.3.2 - 2022/01/29
+
+### Changes
+
+* rename syntax to
+  removeUnusedResources [#45](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/45)
+
 # v1.3.1 - 2022/01/28
 
 ### Fixes
 
 * support AGP 7.1.0 [#43](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/43)
-* fix read original xml strings [#41](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/41)
+* fix read original xml
+  strings [#41](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/41)
 
 # v1.3.0 - 2022/01/25
 
