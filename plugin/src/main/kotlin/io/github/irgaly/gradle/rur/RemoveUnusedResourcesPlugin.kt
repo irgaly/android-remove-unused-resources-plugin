@@ -11,7 +11,7 @@ import java.io.File
 class RemoveUnusedResourcesPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         val extension = target.extensions.create(
-            "removeUnusedResource",
+            "removeUnusedResources",
             RemoveUnusedResourcesExtension::class.java
         )
         target.tasks.register(

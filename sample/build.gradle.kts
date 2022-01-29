@@ -21,7 +21,7 @@ android {
     }
 }
 
-removeUnusedResource {
+removeUnusedResources {
     //dryRun = true
     lintVariant = "debug"
     //lintResultXml = file("${buildDir}/reports/lint-results-debug.xml")

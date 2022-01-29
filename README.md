@@ -229,7 +229,7 @@ Gradle configuration syntax is also available.
 `app/build.gradle.kts`
 
 ```kotlin
-removeUnusedResource {
+removeUnusedResources {
   // for dry run
   // default: false
   dryRun = true
