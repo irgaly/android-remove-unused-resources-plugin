@@ -1,7 +1,7 @@
 package io.github.irgaly.gradle.rur
 
-import io.github.irgaly.gradle.rur.xml.OriginalCharactersStaxXmlParser
-import io.github.irgaly.gradle.rur.xml.XmlEvent
+import io.github.irgaly.xml.OriginalCharactersStaxXmlParser
+import io.github.irgaly.xml.XmlEvent
 import java.io.InputStream
 import java.io.Writer
 
