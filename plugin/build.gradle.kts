@@ -15,7 +15,7 @@ tasks.withType<Test> {
 
 dependencies {
     implementation("com.android.tools.build:gradle:7.0.4")
-    implementation("com.fasterxml.woodstox:woodstox-core:6.2.8")
+    implementation(libs.originalCharactersStax)
     testImplementation("io.kotest:kotest-runner-junit5:5.1.0")
     testImplementation("io.kotest:kotest-assertions-core:5.1.0")
 }
