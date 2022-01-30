@@ -7,7 +7,7 @@ on:
       - v[0-9]+.[0-9]+.[0-9]+*
 
 jobs:
-  deploy-mavencentral:
+  deploy-pluginportal:
     runs-on: ubuntu-latest
     env:
       GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
