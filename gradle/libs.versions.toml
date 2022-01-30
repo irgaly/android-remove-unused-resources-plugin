@@ -1,8 +1,13 @@
 [versions]
 kotlin = "1.6.10"
+kotest = "5.1.0"
 
 [libraries]
+android-gradle = { module = "com.android.tools.build:gradle", version = "7.0.4" }
 androidx-core = { module = "androidx.core:core-ktx", version = "1.7.0" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version = "1.4.0" }
 androidx-material = { module = "com.google.android.material:material", version = "1.5.0" }
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version = "2.1.2" }
+originalCharactersStax = { module = "io.github.irgaly.xml:original-characters-stax", version = "1.0.1" }
+test-kotest = { module = "io.kotest:kotest-runner-junit5", version.ref = "kotest" }
+test-kotest-assertions = { module = "io.kotest:kotest-assertions-core", version.ref = "kotest" }
