@@ -2,17 +2,14 @@
 name: Update and commit sample.diff
 
 on:
-  pull_request:
-    types: [ opened, reopened, synchronize, ready_for_review ]
+  push:
+    branches: [ main ]
 
 jobs:
   update-samplediff:
     runs-on: ubuntu-latest
-    if: ${{ !github.event.pull_request.draft }}
     steps:
       - uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.ref }}
       - name: Remove Unused Resouces
         run: |
           ./gradlew :sample:lintDebug :sample:removeUnusedResources -Prur.lint.onlyUnusedResources -Prur.lint.disableLintConfig -Prur.lintVariant="debug"
