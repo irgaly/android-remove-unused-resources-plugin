@@ -1,0 +1,115 @@
+diff --git a/sample/sample-sub/src/main/res/drawable-v30/samplesub_unused_alternative.xml b/sample/sample-sub/src/main/res/drawable-v30/samplesub_unused_alternative.xml
+deleted file mode 100644
+index 87484f1..0000000
+--- a/sample/sample-sub/src/main/res/drawable-v30/samplesub_unused_alternative.xml
++++ /dev/null
+@@ -1,6 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+-    <item>
+-        <color android:color="#000000" />
+-    </item>
+-</selector>
+diff --git a/sample/sample-sub/src/main/res/drawable/samplesub_unused_alternative.xml b/sample/sample-sub/src/main/res/drawable/samplesub_unused_alternative.xml
+deleted file mode 100644
+index 87484f1..0000000
+--- a/sample/sample-sub/src/main/res/drawable/samplesub_unused_alternative.xml
++++ /dev/null
+@@ -1,6 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+-    <item>
+-        <color android:color="#000000" />
+-    </item>
+-</selector>
+diff --git a/sample/sample-sub/src/main/res/drawable/samplesub_unused_drawable.xml b/sample/sample-sub/src/main/res/drawable/samplesub_unused_drawable.xml
+deleted file mode 100644
+index 87484f1..0000000
+--- a/sample/sample-sub/src/main/res/drawable/samplesub_unused_drawable.xml
++++ /dev/null
+@@ -1,6 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+-    <item>
+-        <color android:color="#000000" />
+-    </item>
+-</selector>
+diff --git a/sample/sample-sub/src/main/res/drawable/samplesub_unused_drawable_ignored.xml b/sample/sample-sub/src/main/res/drawable/samplesub_unused_drawable_ignored.xml
+deleted file mode 100644
+index 01d6dec..0000000
+--- a/sample/sample-sub/src/main/res/drawable/samplesub_unused_drawable_ignored.xml
++++ /dev/null
+@@ -1,6 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+-    <item>
+-        <color android:color="@color/black"/>
+-    </item>
+-</selector>
+diff --git a/sample/src/main/res/drawable-v30/unused_png9patch_alternative.9.png b/sample/src/main/res/drawable-v30/unused_png9patch_alternative.9.png
+deleted file mode 100644
+index a54fc97..0000000
+Binary files a/sample/src/main/res/drawable-v30/unused_png9patch_alternative.9.png and /dev/null differ
+diff --git a/sample/src/main/res/drawable/unused_drawable.xml b/sample/src/main/res/drawable/unused_drawable.xml
+deleted file mode 100644
+index 01d6dec..0000000
+--- a/sample/src/main/res/drawable/unused_drawable.xml
++++ /dev/null
+@@ -1,6 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+-    <item>
+-        <color android:color="@color/black"/>
+-    </item>
+-</selector>
+diff --git a/sample/src/main/res/drawable/unused_drawable_ignored.xml b/sample/src/main/res/drawable/unused_drawable_ignored.xml
+deleted file mode 100644
+index 01d6dec..0000000
+--- a/sample/src/main/res/drawable/unused_drawable_ignored.xml
++++ /dev/null
+@@ -1,6 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<selector xmlns:android="http://schemas.android.com/apk/res/android">
+-    <item>
+-        <color android:color="@color/black"/>
+-    </item>
+-</selector>
+diff --git a/sample/src/main/res/drawable/unused_png9patch_alternative.9.png b/sample/src/main/res/drawable/unused_png9patch_alternative.9.png
+deleted file mode 100644
+index a54fc97..0000000
+Binary files a/sample/src/main/res/drawable/unused_png9patch_alternative.9.png and /dev/null differ
+diff --git a/sample/src/main/res/values-night/colors.xml b/sample/src/main/res/values-night/colors.xml
+deleted file mode 100644
+index efd4713..0000000
+--- a/sample/src/main/res/values-night/colors.xml
++++ /dev/null
+@@ -1,4 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<resources>
+-    <color name="unused_color_with_night_theme">#000000</color>
+-</resources>
+diff --git a/sample/src/main/res/values/colors.xml b/sample/src/main/res/values/colors.xml
+index d54ca5c..282d22f 100644
+--- a/sample/src/main/res/values/colors.xml
++++ b/sample/src/main/res/values/colors.xml
+@@ -6,8 +6,6 @@
+     <color name="teal_700">#FF018786</color>
+     <color name="black">#FF000000</color>
+     <color name="white">#FFFFFFFF</color>
+-    <color name="unused_color">#FFFFFF</color>
+-    <color name="unused_color_with_night_theme">#FFFFFF</color>
+     <color name="unused_exclude_color">#FFFFFF</color>
+     <color name="unused_exclude_pattern_color">#FFFFFF</color>
+     <color name="unused_override" tools:override="true">#FFFFFF</color>
+diff --git a/sample/src/main/res/values/strings.xml b/sample/src/main/res/values/strings.xml
+index 8c4237d..bd01442 100644
+--- a/sample/src/main/res/values/strings.xml
++++ b/sample/src/main/res/values/strings.xml
+@@ -1,7 +1,6 @@
+ <!-- header comment -->
+ <resources>
+     <string name="app_name">Plugin Sample</string>
+-    <string name="unused_string">unused</string>
+     <string name="empty1" />
+     <string name="empty2"></string>
+     <string name="character_reference">© = &#169;</string>
