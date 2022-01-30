@@ -1,0 +1,42 @@
+# PR Open -> Test sample diff
+name: Test Sample diff
+
+on:
+  pull_request:
+    types: [ opened, reopened, synchronize, ready_for_review ]
+
+jobs:
+  test-diff:
+    runs-on: ubuntu-latest
+    if: ${{ !github.event.pull_request.draft }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Remove Unused Resouces
+        run: |
+          ./gradlew :sample:lintDebug :sample:removeUnusedResources -Prur.lint.onlyUnusedResources -Prur.lint.disableLintConfig -Prur.lintVariant="debug"
+      - name: Compare diff
+        id: compare
+        shell: bash +e {0}
+        run: |
+          git diff --unified=0 | sed "/^index .*$/d" > sample.diff.new
+          diff -u sample.diff sample.diff.new > sample.diff.changes || (
+            echo "::set-output name=diff::$(cat sample.diff.changes | tail -n +3 | sed -z 's/\n/%0A/g')"
+            exit 1
+          )
+      - uses: peter-evans/find-comment@v1
+        id: find_comment
+        if: failure()
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-includes: "Diff changed:"
+      - uses: peter-evans/create-or-update-comment@v1
+        if: failure()
+        with:
+          body: |
+            Diff changed:
+            ```diff
+            ${{ steps.compare.outputs.diff }}
+            ```
+          edit-mode: replace
+          comment-id: ${{ steps.find_comment.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
