@@ -14,10 +14,10 @@ tasks.withType<Test> {
 }
 
 dependencies {
-    implementation("com.android.tools.build:gradle:7.0.4")
+    implementation(libs.android.gradle)
     implementation(libs.originalCharactersStax)
-    testImplementation("io.kotest:kotest-runner-junit5:5.1.0")
-    testImplementation("io.kotest:kotest-assertions-core:5.1.0")
+    testImplementation(libs.test.kotest)
+    testImplementation(libs.test.kotest.assertions)
 }
 
 group = "io.github.irgaly"
