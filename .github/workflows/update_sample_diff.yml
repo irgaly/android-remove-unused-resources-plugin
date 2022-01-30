@@ -18,6 +18,6 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git diff --unified=0 | sed "/^index .*$/d"> sample.diff
+          git diff --unified=0 ":!sample.diff" | sed "/^index .*$/d"> sample.diff
           git add sample.diff && git commit -m "Update sample.diff" && git push origin HEAD
           exit 0
