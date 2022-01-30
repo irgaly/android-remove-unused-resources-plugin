@@ -1,0 +1,19 @@
+# v*.*.* tag -> deploy to Gradle Plugin Portal
+name: Deploy to Gradle Plugin Portal
+
+on:
+  push:
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+*
+
+jobs:
+  deploy-mavencentral:
+    runs-on: ubuntu-latest
+    env:
+      GRADLE_PUBLISH_KEY: ${{ secrets.GRADLE_PUBLISH_KEY }}
+      GRADLE_PUBLISH_SECRET: ${{ secrets.GRADLE_PUBLISH_SECRET }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Deploy to Gradle Plugin Portal
+        run: |
+          ./gradlew :plugin:publishPlugins
