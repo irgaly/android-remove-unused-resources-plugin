@@ -9,6 +9,14 @@
         "patch"
       ],
       "enabled": false
+    },
+    {
+      "groupName": "Android Gradle Plugin",
+      "matchPackageNames": [
+        "com.android.application",
+        "com.android.library",
+        "com.android.tools.build:gradle"
+      ]
     }
   ]
 }
