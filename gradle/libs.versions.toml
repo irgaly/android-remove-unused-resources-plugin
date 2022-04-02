@@ -1,6 +1,6 @@
 [versions]
 kotlin = "1.6.10"
-kotest = "5.1.0"
+kotest = "5.2.2"
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version = "7.1.2" }
