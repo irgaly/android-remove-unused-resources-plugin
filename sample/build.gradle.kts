@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    compileSdk = 31
+    compileSdk = 33
     defaultConfig {
         applicationId = "org.sample.app"
         minSdk = 26
-        targetSdk = 31
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0.0"
     }
