@@ -1,3 +1,13 @@
+# v1.3.3 - 2022/09/19
+
+### Improvements
+
+* separate and
+  use [original-characters-stax-xml-parser](https://github.com/irgaly/original-characters-stax-xml-parser)
+* Gradle 7.5.1
+* Maven Plugin Publish 1.0.0
+* add tests
+
 # v1.3.2 - 2022/01/29
 
 ### Changes
