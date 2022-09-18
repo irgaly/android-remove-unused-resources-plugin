@@ -1,7 +1,5 @@
 plugins {
-    id("java-gradle-plugin")
     kotlin("jvm")
-    id("maven-publish")
     id("com.gradle.plugin-publish")
 }
 
@@ -20,8 +18,8 @@ dependencies {
     testImplementation(libs.test.kotest.assertions)
 }
 
-group = "io.github.irgaly"
-version = "1.3.2"
+group = "io.github.irgaly.remove-unused-resources"
+version = "1.3.3"
 
 java {
     withSourcesJar()
