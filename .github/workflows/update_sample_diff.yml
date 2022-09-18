@@ -1,4 +1,4 @@
-# PR open -> commit sample.diff
+# main branch -> commit sample.diff
 name: Update and commit sample.diff
 
 on:
