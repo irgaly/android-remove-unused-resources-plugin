@@ -7,8 +7,8 @@ pluginManagement {
         gradlePluginPortal()
     }
     plugins {
-        id("com.android.application") version "7.3.0"
-        id("com.android.library") version "7.3.0"
+        id("com.android.application") version "7.4.2"
+        id("com.android.library") version "7.4.2"
         kotlin("android") version "1.7.10"
         id("io.github.irgaly.remove-unused-resources") version "1.3.3"
     }
