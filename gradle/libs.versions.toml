@@ -5,7 +5,7 @@ kotest = "5.4.2"
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version = "7.3.0" }
 androidx-core = { module = "androidx.core:core-ktx", version = "1.9.0" }
-androidx-appcompat = { module = "androidx.appcompat:appcompat", version = "1.5.1" }
+androidx-appcompat = { module = "androidx.appcompat:appcompat", version = "1.6.1" }
 androidx-material = { module = "com.google.android.material:material", version = "1.6.1" }
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version = "2.1.2" }
 originalCharactersStax = { module = "io.github.irgaly.xml:original-characters-stax", version = "1.0.1" }
