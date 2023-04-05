@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm")
-    id("com.gradle.plugin-publish")
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.publish)
 }
 
 sourceSets.configureEach {
@@ -19,7 +19,7 @@ dependencies {
 }
 
 group = "io.github.irgaly.remove-unused-resources"
-version = "1.3.3"
+version = libs.versions.removeunusedresources.get()
 
 java {
     withSourcesJar()
@@ -31,7 +31,7 @@ gradlePlugin {
     vcsUrl.set("https://github.com/irgaly/android-remove-unused-resources-plugin")
     plugins {
         create("plugin") {
-            id = "io.github.irgaly.remove-unused-resources"
+            id = libs.plugins.removeunusedresources.get().pluginId
             displayName = "Remove Unused Resources Plugin for Android"
             description = "A plugin removes unused resources discovered by Android Lint"
             tags.set(listOf("android"))
