@@ -5,6 +5,7 @@ plugins {
 }
 
 android {
+    namespace = "org.sample.app"
     compileSdk = 33
     defaultConfig {
         applicationId = "org.sample.app"
