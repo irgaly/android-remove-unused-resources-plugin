@@ -1,10 +1,11 @@
 plugins {
-    id("com.android.application")
-    kotlin("android")
-    id("io.github.irgaly.remove-unused-resources")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.removeunusedresources)
 }
 
 android {
+    namespace = "org.sample.app"
     compileSdk = 33
     defaultConfig {
         applicationId = "org.sample.app"
@@ -18,6 +19,10 @@ android {
     }
     buildFeatures {
         dataBinding = true
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 }
 
