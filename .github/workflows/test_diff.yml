@@ -11,6 +11,10 @@ jobs:
     if: ${{ !github.event.pull_request.draft }}
     steps:
       - uses: actions/checkout@v3
+      - uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 17
       - name: Remove Unused Resources
         run: |
           ./gradlew :sample:lintDebug :sample:removeUnusedResources -Prur.lint.onlyUnusedResources -Prur.lint.disableLintConfig -Prur.lintVariant="debug"
