@@ -26,6 +26,16 @@ java {
     withJavadocJar()
 }
 
+if (providers.environmentVariable("CI").isPresent) {
+    apply(plugin = "signing")
+    extensions.configure<SigningExtension> {
+        useInMemoryPgpKeys(
+            providers.environmentVariable("SIGNING_PGP_KEY").orNull,
+            providers.environmentVariable("SIGNING_PGP_PASSWORD").orNull
+        )
+    }
+}
+
 gradlePlugin {
     website.set("https://github.com/irgaly/android-remove-unused-resources-plugin")
     vcsUrl.set("https://github.com/irgaly/android-remove-unused-resources-plugin")
