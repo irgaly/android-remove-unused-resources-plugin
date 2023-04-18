@@ -1,3 +1,17 @@
+# v1.4.0 - 2023/04/18 JST
+
+### Maintenance
+
+* Support Gradle 8 [#85](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/85)
+* Support Android Gradle Plugin
+  8.0.0 [#85](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/85)
+* Sign Gradle Plugin [#84](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/84)
+
+### Changes
+
+* Deprecate rur.lint.disableLintConfig
+  option [#85](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/85)
+
 # v1.3.3 - 2022/09/19
 
 ### Improvements
