@@ -11,7 +11,7 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val bindinng = ActivityMainBinding.bind(findViewById<ViewGroup>(android.R.id.content)[0])
-        val samplesub_used = R.drawable.samplesub_used_drawable_from_sample
+        val samplesub_used = org.sample.app.sample.sub.R.drawable.samplesub_used_drawable_from_sample
         val used = listOf(
             R.string.empty1, R.string.empty2, R.string.character_reference,
             R.string.grater_than, R.string.amp,
