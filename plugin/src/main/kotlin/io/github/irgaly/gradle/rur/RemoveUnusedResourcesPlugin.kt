@@ -49,7 +49,9 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
                             warning("UnusedResources")
                         }
                         if (disableLintConfig) {
-                            lintConfig = File("")
+                            target.logger.warn("-Prur.lint.disableLintConfig option is deprecated. Use -Prur.lint.overrideLintConfig instead.")
+                            lintConfig =
+                                File("${target.rootProject.projectDir}/_dummy_remove_unused_resources.xml")
                         }
                         if (overrideLintConfig != null) {
                             val file = target.rootProject.file(overrideLintConfig)

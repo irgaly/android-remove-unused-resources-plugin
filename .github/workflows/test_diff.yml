@@ -17,14 +17,15 @@ jobs:
           java-version: 17
       - name: Remove Unused Resources
         run: |
-          ./gradlew :sample:lintDebug :sample:removeUnusedResources -Prur.lint.onlyUnusedResources -Prur.lint.disableLintConfig -Prur.lintVariant="debug"
+          ./gradlew :sample:lintDebug -Prur.lint.onlyUnusedResources -Prur.lint.overrideLintConfig="./lint.empty.xml"
+          ./gradlew :sample:removeUnusedResources -Prur.lintVariant="debug"
       - name: Compare diff
         id: compare
         shell: bash +e {0}
         run: |
           git diff --unified=0 | sed "/^index .*$/d" > sample.diff.new
           diff -u sample.diff sample.diff.new > sample.diff.changes || (
-            echo "::set-output name=diff::$(cat sample.diff.changes | tail -n +3 | sed -z 's/\n/%0A/g')"
+            echo "diff=$(cat sample.diff.changes | tail -n +3 | sed -z 's/\n/%0A/g')" >> $GITHUB_OUTPUT
             exit 1
           )
       - uses: peter-evans/find-comment@v2
