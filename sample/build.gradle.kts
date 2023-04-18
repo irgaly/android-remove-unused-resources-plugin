@@ -14,11 +14,11 @@ android {
         versionCode = 1
         versionName = "1.0.0"
     }
-    sourceSets.configureEach {
-        java.srcDirs("src/$name/kotlin")
-    }
     buildFeatures {
-        dataBinding = true
+        compose = true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -36,9 +36,9 @@ removeUnusedResources {
 }
 
 dependencies {
-    implementation(libs.androidx.core)
+    implementation(dependencies.platform(libs.compose.bom))
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.material)
-    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.lifecycle)
+    implementation(libs.bundles.compose)
     implementation(projects.sample.sampleSub)
 }
