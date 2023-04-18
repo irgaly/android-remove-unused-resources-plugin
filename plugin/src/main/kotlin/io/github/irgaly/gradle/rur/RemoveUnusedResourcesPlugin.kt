@@ -10,6 +10,7 @@ import java.io.File
 
 class RemoveUnusedResourcesPlugin : Plugin<Project> {
     override fun apply(target: Project) {
+        val providers = target.providers
         val extension = target.extensions.create(
             "removeUnusedResources",
             RemoveUnusedResourcesExtension::class.java
@@ -18,20 +19,36 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
             "removeUnusedResources",
             RemoveUnusedResourcesTask::class.java
         ) { task ->
-            task.apply {
-                dryRun.set(extension.dryRun)
-                lintVariant.set(extension.lintVariant)
-                lintResultXml.set(extension.lintResultXml)
-                excludeIds.set(extension.excludeIds)
-                excludeIdPatterns.set(extension.excludeIdPatterns)
-                excludeFilePatterns.set(extension.excludeFilePatterns)
-                mustRunAfter(target.tasks.withType(AndroidLintTask::class.java))
+            target.finalizeAgpDsl {
+                var lintResultXml = providers.gradleProperty("rur.lintResultXml").orNull?.let {
+                    target.rootProject.file(it)
+                } ?: extension.lintResultXml
+                if (lintResultXml == null) {
+                    val variant =
+                        providers.gradleProperty("rur.lintVariant").orNull
+                            ?: extension.lintVariant
+                            ?: target.getDefaultVariant() ?: ""
+                    val fileName =
+                        "lint-results${if (variant.isEmpty()) "" else "-$variant"}.xml"
+                    lintResultXml =
+                        checkNotNull(target.file("${target.buildDir}/reports/$fileName"))
+                }
+                val dryRun = providers.gradleProperty("rur.dryRun").isPresent
+                task.apply {
+                    this.dryRun.set(dryRun || (extension.dryRun ?: false))
+                    lintVariant.set(extension.lintVariant)
+                    this.lintResultXml.set(lintResultXml)
+                    excludeIds.set(extension.excludeIds)
+                    excludeIdPatterns.set(extension.excludeIdPatterns)
+                    excludeFilePatterns.set(extension.excludeFilePatterns)
+                    mustRunAfter(target.tasks.withType(AndroidLintTask::class.java))
+                }
             }
         }
         val onlyUnusedResources =
-            target.properties.containsKey("rur.lint.onlyUnusedResources")
-        val disableLintConfig = target.properties.containsKey("rur.lint.disableLintConfig")
-        val overrideLintConfig = target.properties["rur.lint.overrideLintConfig"] as? String
+            providers.gradleProperty("rur.lint.onlyUnusedResources").isPresent
+        val disableLintConfig = providers.gradleProperty("rur.lint.disableLintConfig").isPresent
+        val overrideLintConfig = providers.gradleProperty("rur.lint.overrideLintConfig").orNull
         val hasOverrideLintOptions =
             (onlyUnusedResources || disableLintConfig || (overrideLintConfig != null))
         if (hasOverrideLintOptions) {
@@ -63,6 +80,25 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
                     }
                 }
             }
+        }
+    }
+
+
+    /**
+     * get default variant from "lint" task's dependencies.
+     * ex) "lintDebug" Task
+     *
+     * if AGP version is lower than 7.0.0, this returns null
+     */
+    private fun Project.getDefaultVariant(): String? {
+        return tasks.findByName("lint")?.let { lintTask ->
+            val depends =
+                lintTask.dependsOn.filterIsInstance<String>().filter { it.startsWith("lint") }
+            if (depends.size == 1) {
+                // if AGP 7.0.0 or upper, lint task depends default variant lint task, named "lint{variant}"
+                Regex("^lint(.+)$").matchEntire(depends.first())?.groupValues?.get(1)
+                    ?.decapitalize()
+            } else null
         }
     }
 }
