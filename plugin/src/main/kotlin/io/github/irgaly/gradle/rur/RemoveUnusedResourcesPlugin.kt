@@ -10,6 +10,7 @@ import java.io.File
 
 class RemoveUnusedResourcesPlugin : Plugin<Project> {
     override fun apply(target: Project) {
+        val providers = target.providers
         val extension = target.extensions.create(
             "removeUnusedResources",
             RemoveUnusedResourcesExtension::class.java
@@ -18,10 +19,24 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
             "removeUnusedResources",
             RemoveUnusedResourcesTask::class.java
         ) { task ->
+            var lintResultXml = providers.gradleProperty("rur.lintResultXml").orNull?.let {
+                target.rootProject.file(it)
+            } ?: extension.lintResultXml
+            if (lintResultXml == null) {
+                val variant =
+                    providers.gradleProperty("rur.lintVariant").orNull
+                        ?: extension.lintVariant
+                        ?: error("removeUnusedResources lintVariant or rur.lintVariant is not specified")
+                val fileName =
+                    "lint-results${if (variant.isEmpty()) "" else "-$variant"}.xml"
+                lintResultXml =
+                    checkNotNull(target.file("${target.buildDir}/reports/$fileName"))
+            }
+            val dryRun = providers.gradleProperty("rur.dryRun").isPresent
             task.apply {
-                dryRun.set(extension.dryRun)
+                this.dryRun.set(dryRun || (extension.dryRun ?: false))
                 lintVariant.set(extension.lintVariant)
-                lintResultXml.set(extension.lintResultXml)
+                this.lintResultXml.set(lintResultXml)
                 excludeIds.set(extension.excludeIds)
                 excludeIdPatterns.set(extension.excludeIdPatterns)
                 excludeFilePatterns.set(extension.excludeFilePatterns)
@@ -29,9 +44,9 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
             }
         }
         val onlyUnusedResources =
-            target.properties.containsKey("rur.lint.onlyUnusedResources")
-        val disableLintConfig = target.properties.containsKey("rur.lint.disableLintConfig")
-        val overrideLintConfig = target.properties["rur.lint.overrideLintConfig"] as? String
+            providers.gradleProperty("rur.lint.onlyUnusedResources").isPresent
+        val disableLintConfig = providers.gradleProperty("rur.lint.disableLintConfig").isPresent
+        val overrideLintConfig = providers.gradleProperty("rur.lint.overrideLintConfig").orNull
         val hasOverrideLintOptions =
             (onlyUnusedResources || disableLintConfig || (overrideLintConfig != null))
         if (hasOverrideLintOptions) {
