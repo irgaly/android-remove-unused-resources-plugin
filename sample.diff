@@ -82,7 +82,8 @@ deleted file mode 100644
 diff --git a/sample/src/main/res/values/colors.xml b/sample/src/main/res/values/colors.xml
 --- a/sample/src/main/res/values/colors.xml
 +++ b/sample/src/main/res/values/colors.xml
-@@ -9,2 +8,0 @@
+@@ -4,3 +3,0 @@
+-    <color name="black">#FF000000</color>
 -    <color name="unused_color">#FFFFFF</color>
 -    <color name="unused_color_with_night_theme">#FFFFFF</color>
 diff --git a/sample/src/main/res/values/strings.xml b/sample/src/main/res/values/strings.xml
