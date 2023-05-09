@@ -1,3 +1,9 @@
+# v1.4.1 - 2023/05/9 JST
+
+### Fixes
+
+* error on running task when lintVariant not specified [#90](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/90)
+
 # v1.4.0 - 2023/04/18 JST
 
 ### Maintenance
