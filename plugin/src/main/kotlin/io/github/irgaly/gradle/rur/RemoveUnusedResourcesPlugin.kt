@@ -26,11 +26,12 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
                 val variant =
                     providers.gradleProperty("rur.lintVariant").orNull
                         ?: extension.lintVariant
-                        ?: error("removeUnusedResources lintVariant or rur.lintVariant is not specified")
-                val fileName =
-                    "lint-results${if (variant.isEmpty()) "" else "-$variant"}.xml"
-                lintResultXml =
-                    checkNotNull(target.file("${target.buildDir}/reports/$fileName"))
+                if (variant != null) {
+                    val fileName =
+                        "lint-results${if (variant.isEmpty()) "" else "-$variant"}.xml"
+                    lintResultXml =
+                        checkNotNull(target.file("${target.buildDir}/reports/$fileName"))
+                }
             }
             val dryRun = providers.gradleProperty("rur.dryRun").isPresent
             task.apply {
