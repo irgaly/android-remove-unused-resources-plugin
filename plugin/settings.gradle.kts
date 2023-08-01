@@ -1,14 +1,9 @@
-enableFeaturePreview("VERSION_CATALOGS")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 pluginManagement {
     repositories {
         google()
         mavenCentral()
         gradlePluginPortal()
-    }
-    plugins {
-        kotlin("jvm") version "1.6.10"
-        id("com.gradle.plugin-publish") version "0.20.0"
     }
 }
 dependencyResolutionManagement {
@@ -21,5 +16,8 @@ dependencyResolutionManagement {
             from(files("../gradle/libs.versions.toml"))
         }
     }
+}
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version ("0.6.0")
 }
 rootProject.name = "plugin"

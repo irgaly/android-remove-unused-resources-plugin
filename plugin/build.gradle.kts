@@ -1,8 +1,6 @@
 plugins {
-    id("java-gradle-plugin")
-    kotlin("jvm")
-    id("maven-publish")
-    id("com.gradle.plugin-publish")
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.publish)
 }
 
 sourceSets.configureEach {
@@ -20,27 +18,38 @@ dependencies {
     testImplementation(libs.test.kotest.assertions)
 }
 
-group = "io.github.irgaly"
-version = "1.3.2"
+group = "io.github.irgaly.remove-unused-resources"
+version = libs.versions.removeunusedresources.get()
+
+kotlin {
+    jvmToolchain(11)
+}
 
 java {
     withSourcesJar()
     withJavadocJar()
 }
 
-gradlePlugin {
-    plugins {
-        create("plugin") {
-            id = "io.github.irgaly.remove-unused-resources"
-            displayName = "Remove Unused Resources Plugin for Android"
-            description = "A plugin removes unused resources discovered by Android Lint"
-            implementationClass = "io.github.irgaly.gradle.rur.RemoveUnusedResourcesPlugin"
-        }
+if (providers.environmentVariable("CI").isPresent) {
+    apply(plugin = "signing")
+    extensions.configure<SigningExtension> {
+        useInMemoryPgpKeys(
+            providers.environmentVariable("SIGNING_PGP_KEY").orNull,
+            providers.environmentVariable("SIGNING_PGP_PASSWORD").orNull
+        )
     }
 }
 
-pluginBundle {
-    website = "https://github.com/irgaly/android-remove-unused-resources-plugin"
-    vcsUrl = "https://github.com/irgaly/android-remove-unused-resources-plugin"
-    tags = listOf("android")
+gradlePlugin {
+    website.set("https://github.com/irgaly/android-remove-unused-resources-plugin")
+    vcsUrl.set("https://github.com/irgaly/android-remove-unused-resources-plugin")
+    plugins {
+        create("plugin") {
+            id = libs.plugins.removeunusedresources.get().pluginId
+            displayName = "Remove Unused Resources Plugin for Android"
+            description = "A plugin removes unused resources discovered by Android Lint"
+            tags.set(listOf("android"))
+            implementationClass = "io.github.irgaly.gradle.rur.RemoveUnusedResourcesPlugin"
+        }
+    }
 }

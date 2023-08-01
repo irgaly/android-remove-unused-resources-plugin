@@ -1,3 +1,33 @@
+# v1.4.1 - 2023/05/9 JST
+
+### Fixes
+
+* error on running task when lintVariant not specified [#90](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/90)
+
+# v1.4.0 - 2023/04/18 JST
+
+### Maintenance
+
+* Support Gradle 8 [#85](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/85)
+* Support Android Gradle Plugin
+  8.0.0 [#85](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/85)
+* Sign Gradle Plugin [#84](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/84)
+
+### Changes
+
+* Deprecate rur.lint.disableLintConfig
+  option [#85](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/85)
+
+# v1.3.3 - 2022/09/19
+
+### Improvements
+
+* separate and
+  use [original-characters-stax-xml-parser](https://github.com/irgaly/original-characters-stax-xml-parser)
+* Gradle 7.5.1
+* Maven Plugin Publish 1.0.0
+* add tests
+
 # v1.3.2 - 2022/01/29
 
 ### Changes

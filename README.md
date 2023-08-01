@@ -56,7 +56,7 @@ Apply the plugin to your app module.
 
 ```kotlin
 plugins {
-  id("io.github.irgaly.remove-unused-resources") version "1.3.2"
+  id("io.github.irgaly.remove-unused-resources") version "1.4.1"
 }
 ```
 
@@ -156,23 +156,9 @@ lintOptions {
 }
 ```
 
-## Disable or Overrides lintConfig
+## Overrides lintConfig
 
-This command disables to load default lint.xml.
-
-```shell
-% ./gradlew :app:lintDebug -Prur.lint.disableLintConfig
-```
-
-The `-Prur.lint.disableLintConfig` overrides lint options by settings below:
-
-```kotlin
-lintOptions {
-  lintConfig = File("") // invalid file, so it is disabled to load lint.xml
-}
-```
-
-Also you can overrides a single lintConfig file for all projects.
+You can overrides a single lintConfig file for all projects.
 
 ```shell
 % ./gradlew :app:lintDebug -Prur.lint.overrideLintConfig="./lint.unusedresources.xml"
@@ -187,7 +173,8 @@ is [here](https://googlesamples.github.io/android-custom-lint-rules/user-guide.h
 This is recommended one liner for CI.
 
 ```shell
-% ./gradlew :app:lintDebug :app:removeUnusedResources -Prur.lint.onlyUnusedResources -Prur.lint.disableLintConfig -Prur.lintVariant="debug"
+% ./gradlew :app:lintDebug -Prur.lint.onlyUnusedResources
+% ./gradlew :app:removeUnusedResources -Prur.lintVariant="debug"
 ```
 
 This executes:
@@ -219,7 +206,6 @@ Gradle properties:
 | rur.lintVariant | the variant for lint result xml path. if lintResultXml is set, lintVariant is ignored. use `{buildDir}/reports/lint-results-{default variant}.xml` if no variant is specified in AGP 7.0.0 or upper. | `./gradlew :app:removeUnusedResources -Prur.lintVariant=debug` |
 | rur.lintResultXml | the lint result xml path from rootProject (or full absolute path) | `./gradlew :app:removeUnusedResources -Prur.lintResultXml="./app/build/reports/lint-results-debug.xml"` |
 | rur.lint.onlyUnusedResources | override lintOptions for checkOnly UnusedResources | `./gradlew :app:lintDebug -Prur.lint.onlyUnusedResources` |
-| rur.lint.disableLintConfig | override lintOptions.lintConfig to empty to disable lint.xml loading | `./gradlew :app:lintDebug -Prur.lint.disableLintConfig` |
 | rur.lint.overrideLintConfig | override lintOptions.lintConfig. the path is relative path from rootProject (or full absolute path) | `./gradlew :app:lintDebug -Prur.lint.overrideLintConfig="./lint.unusedresources.xml"` |
 
 # Gradle configuration syntax
