@@ -18,9 +18,9 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
             val projectAgpVersion =
                 target.extensions.findByType(AndroidComponentsExtension::class.java)?.pluginVersion
             if (projectAgpVersion == null ||
-                projectAgpVersion < AndroidPluginVersion(7, 0)
+                projectAgpVersion < AndroidPluginVersion(7, 1)
             ) {
-                error("support only AGP 7.0.0 or higher")
+                error("please update AGP 7.1.0 or later")
             }
         }
         val providers = target.providers
