@@ -70,12 +70,12 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
                         if (onlyUnusedResources) {
                             if (project == target) {
                                 xmlReport = true
-                                isCheckDependencies = true
+                                checkDependencies = true
                             }
-                            isCheckGeneratedSources = true
+                            checkGeneratedSources = true
                             checkOnly.clear()
-                            checkOnly("UnusedResources")
-                            warning("UnusedResources")
+                            checkOnly.add("UnusedResources")
+                            warning.add("UnusedResources")
                         }
                         if (disableLintConfig) {
                             target.logger.warn("-Prur.lint.disableLintConfig option is deprecated. Use -Prur.lint.overrideLintConfig instead.")
