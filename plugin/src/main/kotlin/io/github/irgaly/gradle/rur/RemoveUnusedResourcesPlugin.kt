@@ -3,8 +3,9 @@ package io.github.irgaly.gradle.rur
 import com.android.build.api.AndroidPluginVersion
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.internal.crash.afterEvaluate
 import com.android.build.gradle.internal.lint.AndroidLintTask
-import io.github.irgaly.gradle.rur.extensions.finalizeAgpDsl
+import io.github.irgaly.gradle.rur.extensions.safeAfterEvaluate
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.io.File
@@ -13,12 +14,14 @@ import java.io.File
 class RemoveUnusedResourcesPlugin : Plugin<Project> {
     @Suppress("UnstableApiUsage") // for AndroidPluginVersion
     override fun apply(target: Project) {
-        val projectAgpVersion =
-            target.extensions.findByType(AndroidComponentsExtension::class.java)?.pluginVersion
-        if (projectAgpVersion == null ||
-            projectAgpVersion < AndroidPluginVersion(7, 0)
-        ) {
-            error("support only AGP 7.0.0 or higher")
+        afterEvaluate {
+            val projectAgpVersion =
+                target.extensions.findByType(AndroidComponentsExtension::class.java)?.pluginVersion
+            if (projectAgpVersion == null ||
+                projectAgpVersion < AndroidPluginVersion(7, 0)
+            ) {
+                error("support only AGP 7.0.0 or higher")
+            }
         }
         val providers = target.providers
         val extension = target.extensions.create(
@@ -62,7 +65,7 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
             (onlyUnusedResources || disableLintConfig || (overrideLintConfig != null))
         if (hasOverrideLintOptions) {
             target.rootProject.allprojects.forEach { project ->
-                project.finalizeAgpDsl {
+                project.safeAfterEvaluate {
                     project.extensions.findByType(BaseExtension::class.java)?.lintOptions?.apply {
                         if (onlyUnusedResources) {
                             if (project == target) {
@@ -84,6 +87,7 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
                             if (!file.exists()) {
                                 error("overrideLintConfig file is not exit: $file")
                             }
+                            target.logger.error("override")
                             lintConfig = file
                         }
                     }
