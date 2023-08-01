@@ -1,8 +1,8 @@
 package io.github.irgaly.gradle.rur
 
 import com.android.build.api.AndroidPluginVersion
+import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.variant.AndroidComponentsExtension
-import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.internal.crash.afterEvaluate
 import com.android.build.gradle.internal.lint.AndroidLintTask
 import io.github.irgaly.gradle.rur.extensions.safeAfterEvaluate
@@ -66,7 +66,7 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
         if (hasOverrideLintOptions) {
             target.rootProject.allprojects.forEach { project ->
                 project.safeAfterEvaluate {
-                    project.extensions.findByType(BaseExtension::class.java)?.lintOptions?.apply {
+                    project.extensions.findByType(CommonExtension::class.java)?.lint {
                         if (onlyUnusedResources) {
                             if (project == target) {
                                 xmlReport = true
@@ -87,7 +87,6 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
                             if (!file.exists()) {
                                 error("overrideLintConfig file is not exit: $file")
                             }
-                            target.logger.error("override")
                             lintConfig = file
                         }
                     }
