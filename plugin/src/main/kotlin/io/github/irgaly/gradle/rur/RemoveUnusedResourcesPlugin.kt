@@ -1,10 +1,11 @@
 package io.github.irgaly.gradle.rur
 
 import com.android.build.api.AndroidPluginVersion
+import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.variant.AndroidComponentsExtension
-import com.android.build.gradle.BaseExtension
+import com.android.build.gradle.internal.crash.afterEvaluate
 import com.android.build.gradle.internal.lint.AndroidLintTask
-import io.github.irgaly.gradle.rur.extensions.finalizeAgpDsl
+import io.github.irgaly.gradle.rur.extensions.safeAfterEvaluate
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import java.io.File
@@ -13,12 +14,14 @@ import java.io.File
 class RemoveUnusedResourcesPlugin : Plugin<Project> {
     @Suppress("UnstableApiUsage") // for AndroidPluginVersion
     override fun apply(target: Project) {
-        val projectAgpVersion =
-            target.extensions.findByType(AndroidComponentsExtension::class.java)?.pluginVersion
-        if (projectAgpVersion == null ||
-            projectAgpVersion < AndroidPluginVersion(7, 0)
-        ) {
-            error("support only AGP 7.0.0 or higher")
+        afterEvaluate {
+            val projectAgpVersion =
+                target.extensions.findByType(AndroidComponentsExtension::class.java)?.pluginVersion
+            if (projectAgpVersion == null ||
+                projectAgpVersion < AndroidPluginVersion(7, 1)
+            ) {
+                error("please update AGP 7.1.0 or later")
+            }
         }
         val providers = target.providers
         val extension = target.extensions.create(
@@ -62,17 +65,17 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
             (onlyUnusedResources || disableLintConfig || (overrideLintConfig != null))
         if (hasOverrideLintOptions) {
             target.rootProject.allprojects.forEach { project ->
-                project.finalizeAgpDsl {
-                    project.extensions.findByType(BaseExtension::class.java)?.lintOptions?.apply {
+                project.safeAfterEvaluate {
+                    project.extensions.findByType(CommonExtension::class.java)?.lint {
                         if (onlyUnusedResources) {
                             if (project == target) {
                                 xmlReport = true
-                                isCheckDependencies = true
+                                checkDependencies = true
                             }
-                            isCheckGeneratedSources = true
+                            checkGeneratedSources = true
                             checkOnly.clear()
-                            checkOnly("UnusedResources")
-                            warning("UnusedResources")
+                            checkOnly.add("UnusedResources")
+                            warning.add("UnusedResources")
                         }
                         if (disableLintConfig) {
                             target.logger.warn("-Prur.lint.disableLintConfig option is deprecated. Use -Prur.lint.overrideLintConfig instead.")
