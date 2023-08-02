@@ -1,7 +1,6 @@
 package io.github.irgaly.gradle.rur
 
 import com.android.build.api.AndroidPluginVersion
-import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.variant.AndroidComponentsExtension
 import com.android.build.gradle.internal.lint.AndroidLintTask
 import org.gradle.api.Plugin
@@ -10,12 +9,8 @@ import java.io.File
 
 class RemoveUnusedResourcesPlugin : Plugin<Project> {
     override fun apply(target: Project) {
-        target.withAndroid {
-            val projectAgpVersion =
-                extensions.findByType(AndroidComponentsExtension::class.java)?.pluginVersion
-            if (projectAgpVersion == null ||
-                projectAgpVersion < AndroidPluginVersion(7, 1)
-            ) {
+        target.withAndroid { androidComponents ->
+            if (androidComponents.pluginVersion < AndroidPluginVersion(7, 1)) {
                 error("please update AGP 7.1.0 or later")
             }
             val extension = extensions.create(
@@ -59,29 +54,31 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
                 (onlyUnusedResources || disableLintConfig || (overrideLintConfig != null))
             if (hasOverrideLintOptions) {
                 rootProject.allprojects.forEach { project ->
-                    project.withAndroid {
-                        extensions.findByType(CommonExtension::class.java)?.lint {
-                            if (onlyUnusedResources) {
-                                if (project == target) {
-                                    xmlReport = true
-                                    checkDependencies = true
+                    project.withAndroid { androidComponents ->
+                        androidComponents.finalizeDsl {
+                            it.lint {
+                                if (onlyUnusedResources) {
+                                    if (project == target) {
+                                        xmlReport = true
+                                        checkDependencies = true
+                                    }
+                                    checkGeneratedSources = true
+                                    checkOnly.clear()
+                                    checkOnly.add("UnusedResources")
+                                    warning.add("UnusedResources")
                                 }
-                                checkGeneratedSources = true
-                                checkOnly.clear()
-                                checkOnly.add("UnusedResources")
-                                warning.add("UnusedResources")
-                            }
-                            if (disableLintConfig) {
-                                logger.warn("-Prur.lint.disableLintConfig option is deprecated. Use -Prur.lint.overrideLintConfig instead.")
-                                lintConfig =
-                                    File("${rootProject.projectDir}/_dummy_remove_unused_resources.xml")
-                            }
-                            if (overrideLintConfig != null) {
-                                val file = rootProject.file(overrideLintConfig)
-                                if (!file.exists()) {
-                                    error("overrideLintConfig file is not exit: $file")
+                                if (disableLintConfig) {
+                                    logger.warn("-Prur.lint.disableLintConfig option is deprecated. Use -Prur.lint.overrideLintConfig instead.")
+                                    lintConfig =
+                                        File("${rootProject.projectDir}/_dummy_remove_unused_resources.xml")
                                 }
-                                lintConfig = file
+                                if (overrideLintConfig != null) {
+                                    val file = rootProject.file(overrideLintConfig)
+                                    if (!file.exists()) {
+                                        error("overrideLintConfig file is not exit: $file")
+                                    }
+                                    lintConfig = file
+                                }
                             }
                         }
                     }
@@ -90,12 +87,26 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
         }
     }
 
-    private fun Project.withAndroid(action: Project.() -> Unit) {
+    private fun Project.withAndroid(
+        action: Project.(androidComponents: AndroidComponentsExtension<*, *, *>) -> Unit
+    ) {
         pluginManager.withPlugin("com.android.application") {
-            action()
+            action(
+                checkNotNull(
+                    extensions.findByType(AndroidComponentsExtension::class.java)
+                ) {
+                    error("please update AGP 7.1.0 or later")
+                }
+            )
         }
         pluginManager.withPlugin("com.android.library") {
-            action()
+            action(
+                checkNotNull(
+                    extensions.findByType(AndroidComponentsExtension::class.java)
+                ) {
+                    error("please update AGP 7.1.0 or later")
+                }
+            )
         }
     }
 }
