@@ -9,7 +9,7 @@ This is useful for CI because that is provided by gradle task.
 * This plugin uses Android Lint results xml file for detect unused resources.
   * It supports multi module Android project, because of using Android Lint.
   * It supports generated sources like DataBinding, Epoxy...
-    * Android Lint supports them by isCheckGeneratedSources option.
+    * Android Lint supports them by checkGeneratedSources option.
 * This plugin provides gradle task.
   * It is suitable to run in CI action.
   * It is equivalent to Android Studio's `Refactor > Remove Unused Resources...` action.
@@ -28,9 +28,8 @@ This is useful for CI because that is provided by gradle task.
 
 # Requires
 
-* Gradle 5.6 ~
-  * use new Plugin version management system (settings.gradle.kts + pluginManagement)
-* Android Gradle Plugin 4.0.0 ~
+* Gradle 7.0.2 ~ with JVM 17 environment
+* Android Gradle Plugin 7.1.0 ~
 
 # Usage
 
@@ -60,34 +59,38 @@ plugins {
 }
 ```
 
-Ensure your lintOptions is correctly set for `UnusedResources` rule.
+Ensure your lint option is correctly set for `UnusedResources` rule.
 
-* `isCheckGeneratedSources = true` is required, if you use code generation such as DataBinding or
+* `checkGeneratedSources = true` is required, if you use code generation such as DataBinding or
   Epoxy.
   * This is required to each projects that uses code generation.
-* `isCheckDependencies = true` is required, if you use multi module project.
+* `checkDependencies = true` is required, if you use multi module project.
+  * This option is default to true from AGP 7.1.0.
   * This option let lint to analyze all resources in all module.
-  * This option is default to true since AGP 7.1.0.
-  * This is required only in app project.
 
 `app/build.gradle.kts`
 
 ```kotlin
-lintOptions {
-  // isCheckGeneratedSources is slow down Android Lint analysing.
-  // It is recommended to disable this when you analyse other lint rules but UnusedResources rule.
-  isCheckGeneratedSources = true
-  // for multi module. This is default to true since AGP 7.1.0
-  isCheckDependencies = true
+android {
+  ...
+  lint {
+    // checkGeneratedSources is slow down Android Lint analysing.
+    // It is recommended to disable this when you analyse other lint rules.
+    checkGeneratedSources = true
+    // checkDependencies = true : checkDependencies is true by default
+  }
 }
 ```
 
 `othermodule/build.gradle.kts`
 
 ```kotlin
-lintOptions {
-  // if a module uses code generation, this is required each project.
-  isCheckGeneratedSources = true
+android {
+  ...
+  lint {
+    // if a module uses code generation, this is required each project.
+    checkGeneratedSources = true
+  }
 }
 ```
 
@@ -144,15 +147,17 @@ For example, this command let lint to check only `UnusedResources` rule.
 The `-Prur.lint.onlyUnusedResources` overrides lint options by settings below:
 
 ```kotlin
-lintOptions {
-  // These settings are applied automatically by the plugin, when -Prur.lint.onlyUnusedResources is specified,
-  // so you don't have to add these settings in build.gradle.kts.
-  xmlReport = true // only app project
-  isCheckDependencies = true // only app project
-  isCheckGeneratedSources = true
-  checkOnly.clear()
-  checkOnly("UnusedResources")
-  warning("UnusedResources")
+android {
+  lint {
+    // These settings are applied automatically by the plugin, when -Prur.lint.onlyUnusedResources is specified,
+    // so you don't have to add these settings in build.gradle.kts.
+    xmlReport = true // only app project
+    checkDependencies = true // only app project
+    checkGeneratedSources = true
+    checkOnly.clear()
+    checkOnly.add("UnusedResources")
+    warning.add("UnusedResources")
+  }
 }
 ```
 
@@ -200,13 +205,13 @@ Gradle tasks:
 
 Gradle properties:
 
-| property | description | example |
-| --- | --- | --- |
-| rur.dryRun | only output result, without deletion | `./gradlew :app:removeUnusedResouces -Prur.dryRun` |
-| rur.lintVariant | the variant for lint result xml path. if lintResultXml is set, lintVariant is ignored. use `{buildDir}/reports/lint-results-{default variant}.xml` if no variant is specified in AGP 7.0.0 or upper. | `./gradlew :app:removeUnusedResources -Prur.lintVariant=debug` |
-| rur.lintResultXml | the lint result xml path from rootProject (or full absolute path) | `./gradlew :app:removeUnusedResources -Prur.lintResultXml="./app/build/reports/lint-results-debug.xml"` |
-| rur.lint.onlyUnusedResources | override lintOptions for checkOnly UnusedResources | `./gradlew :app:lintDebug -Prur.lint.onlyUnusedResources` |
-| rur.lint.overrideLintConfig | override lintOptions.lintConfig. the path is relative path from rootProject (or full absolute path) | `./gradlew :app:lintDebug -Prur.lint.overrideLintConfig="./lint.unusedresources.xml"` |
+| property                     | description                                                                                                                                                                                          | example                                                                                                 |
+|------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
+| rur.dryRun                   | only output result, without deletion                                                                                                                                                                 | `./gradlew :app:removeUnusedResouces -Prur.dryRun`                                                      |
+| rur.lintVariant              | the variant for lint result xml path. if lintResultXml is set, lintVariant is ignored. use `{buildDir}/reports/lint-results-{default variant}.xml` if no variant is specified in AGP 7.0.0 or upper. | `./gradlew :app:removeUnusedResources -Prur.lintVariant=debug`                                          |
+| rur.lintResultXml            | the lint result xml path from rootProject (or full absolute path)                                                                                                                                    | `./gradlew :app:removeUnusedResources -Prur.lintResultXml="./app/build/reports/lint-results-debug.xml"` |
+| rur.lint.onlyUnusedResources | override lint option for checkOnly UnusedResources                                                                                                                                                   | `./gradlew :app:lintDebug -Prur.lint.onlyUnusedResources`                                               |
+| rur.lint.overrideLintConfig  | override lint.lintConfig. the path is relative path from rootProject (or full absolute path)                                                                                                         | `./gradlew :app:lintDebug -Prur.lint.overrideLintConfig="./lint.unusedresources.xml"`                   |
 
 # Gradle configuration syntax
 
