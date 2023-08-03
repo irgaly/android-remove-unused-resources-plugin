@@ -17,34 +17,9 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
                 "removeUnusedResources",
                 RemoveUnusedResourcesExtension::class.java
             )
-            tasks.register(
-                "removeUnusedResources",
-                RemoveUnusedResourcesTask::class.java
-            ) { task ->
-                var lintResultXml = providers.gradleProperty("rur.lintResultXml").orNull?.let {
-                    rootProject.file(it)
-                } ?: extension.lintResultXml
-                if (lintResultXml == null) {
-                    val variant =
-                        providers.gradleProperty("rur.lintVariant").orNull
-                            ?: extension.lintVariant
-                    if (variant != null) {
-                        val fileName =
-                            "lint-results${if (variant.isEmpty()) "" else "-$variant"}.xml"
-                        lintResultXml =
-                            checkNotNull(file("${buildDir}/reports/$fileName"))
-                    }
-                }
-                val dryRun = providers.gradleProperty("rur.dryRun").isPresent
-                task.apply {
-                    this.dryRun.set(dryRun || (extension.dryRun ?: false))
-                    lintVariant.set(extension.lintVariant)
-                    this.lintResultXml.set(lintResultXml)
-                    excludeIds.set(extension.excludeIds)
-                    excludeIdPatterns.set(extension.excludeIdPatterns)
-                    excludeFilePatterns.set(extension.excludeFilePatterns)
-                    mustRunAfter(tasks.withType(AndroidLintTask::class.java))
-                }
+            registerRemoveUnusedResourcesTask(null, extension)
+            androidComponents.onVariants { variant ->
+                registerRemoveUnusedResourcesTask(variant.name, extension)
             }
             val onlyUnusedResources =
                 providers.gradleProperty("rur.lint.onlyUnusedResources").isPresent
@@ -83,6 +58,42 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
                         }
                     }
                 }
+            }
+        }
+    }
+
+    private fun Project.registerRemoveUnusedResourcesTask(
+        taskVariant: String?,
+        extension: RemoveUnusedResourcesExtension
+    ) {
+        tasks.register(
+            "removeUnusedResources${taskVariant?.replaceFirstChar { it.uppercase() } ?: ""}",
+            RemoveUnusedResourcesTask::class.java
+        ) { task ->
+            var lintResultXml = if (taskVariant == null) {
+                providers.gradleProperty("rur.lintResultXml").orNull?.let {
+                    rootProject.file(it)
+                } ?: extension.lintResultXml
+            } else null
+            if (lintResultXml == null) {
+                val variant = taskVariant
+                    ?: providers.gradleProperty("rur.lintVariant").orNull
+                    ?: extension.lintVariant
+                if (variant != null) {
+                    val fileName =
+                        "lint-results${if (variant.isEmpty()) "" else "-$variant"}.xml"
+                    lintResultXml =
+                        checkNotNull(file("${buildDir}/reports/$fileName"))
+                }
+            }
+            val dryRun = providers.gradleProperty("rur.dryRun").isPresent
+            task.apply {
+                this.dryRun.set(dryRun || (extension.dryRun ?: false))
+                this.lintResultXml.set(lintResultXml)
+                excludeIds.set(extension.excludeIds)
+                excludeIdPatterns.set(extension.excludeIdPatterns)
+                excludeFilePatterns.set(extension.excludeFilePatterns)
+                mustRunAfter(tasks.withType(AndroidLintTask::class.java))
             }
         }
     }

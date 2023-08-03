@@ -23,10 +23,6 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
     abstract val dryRun: Property<Boolean>
 
     @get:Optional
-    @get:Input
-    abstract val lintVariant: Property<String>
-
-    @get:Optional
     @get:InputFile
     abstract val lintResultXml: RegularFileProperty
 
