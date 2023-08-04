@@ -1,8 +1,49 @@
+# v2.0.0 - 2023/08/05 JST
+
+This version has breaking changes.
+
+* Breaking Changes
+  * `-Prur.lintVariant` and Extension's `lintVariant` options are removed.
+  * Please use `removeUnusedResources{variant}` task to specify variant instead.
+* Changes
+  * AGP 4.X and AGP 7.0 are not supported from this version.
+  * Minimum support version is AGP 7.1.
+
+### Changes
+
+* refactor: use
+  withPlugin [#103](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/103)
+  * fix: you can apply plugins any order
+    * apply AGP -> remove-unused-resources
+    * apply remove-unused-resources -> AGP
+* Register task as
+  removeUnusedResources{variant} [#104](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/104)
+  * `-Prur.lintVariant` and `lintVariant` options are removed.
+* Migrate AGP 7.1
+  APIs [#100](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/97)
+  * lintOptions -> lint migration in this plugin.
+  * Using CommonExtension, AndroidComponentsExtension, finalizeDsl, and onVariants APIs.
+
+### Refactor
+
+* mark RemoveUnusedResourcesTask as
+  @DisableCachingByDefault [#107](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/107)
+
+### Maintenance
+
+* Kotlin 1.9.0 + Compose Compiler
+  1.5.0 [#97](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/97)
+* Update dependency gradle to
+  v8.2 [#96](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/96)
+* Gradle Plugin: jvmToolchain 11 +
+  foojay-resolver [#92](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/92)
+
 # v1.4.1 - 2023/05/9 JST
 
 ### Fixes
 
-* error on running task when lintVariant not specified [#90](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/90)
+* error on running task when lintVariant not
+  specified [#90](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/90)
 
 # v1.4.0 - 2023/04/18 JST
 
