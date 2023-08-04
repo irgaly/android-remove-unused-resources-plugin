@@ -10,18 +10,11 @@ abstract class RemoveUnusedResourcesExtension {
     var dryRun: Boolean? = null
 
     /**
-     * Build Variant to find lint result (lint-results-{variant}.xml)
+     * Specify a lint result file (lint-results-{variant}.xml)
+     * for `removeUnusedResources` task
+     *
      * default:
-     *   AGP 7.0.0 ~: use {buildDir}/reports/lint-results-{default variant}.xml
-     *   AGP ~ 4.2.2: use {buildDir}/reports/lint-results.xml
-     */
-    var lintVariant: String? = null
-
-    /**
-     * Specify a lint result file directly (lint-results-{variant}.xml)
-     * default:
-     *   AGP 7.0.0 ~: use {buildDir}/reports/lint-results-{default variant}.xml
-     *   AGP ~ 4.2.2: use {buildDir}/reports/lint-results.xml
+     * * {buildDir}/reports/lint-results.xml
      */
     var lintResultXml: File? = null
 

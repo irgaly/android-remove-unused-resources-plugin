@@ -19,14 +19,10 @@ import javax.xml.namespace.QName
 import javax.xml.parsers.DocumentBuilderFactory
 
 abstract class RemoveUnusedResourcesTask : DefaultTask() {
+    @get:Optional
     @get:Input
     abstract val dryRun: Property<Boolean>
 
-    @get:Optional
-    @get:Input
-    abstract val lintVariant: Property<String>
-
-    @get:Optional
     @get:InputFile
     abstract val lintResultXml: RegularFileProperty
 
@@ -45,10 +41,9 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
     @Suppress("LABEL_NAME_CLASH") // for using: return@forEach
     @TaskAction
     fun run() {
-        val isDryRun = dryRun.get()
+        val isDryRun = dryRun.getOrElse(false)
         val dryRunMarker = if (isDryRun) "[dry run] " else ""
-        var lintResultFile = lintResultXml.orNull?.asFile
-            ?: error("Could not determine lintResultXml file. You should set a lintVariant option or lintResultXml option directly")
+        val lintResultFile = lintResultXml.asFile.get()
         logger.info("lintResultFile = $lintResultFile")
         val excludeResourceNames = (excludeIds.orNull?.toHashSet() ?: emptySet())
         val excludeResourceNamePatterns =
@@ -57,9 +52,6 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
             excludeFilePatterns.orNull?.map {
                 fileSystem.getPathMatcher("glob:$it")
             } ?: emptyList()
-        }
-        if (!lintResultFile.exists()) {
-            throw IllegalArgumentException("lint report file is not exist: $lintResultFile")
         }
         val lintResultDocument = DocumentBuilderFactory.newInstance().newDocumentBuilder()
             .parse(lintResultFile).documentElement

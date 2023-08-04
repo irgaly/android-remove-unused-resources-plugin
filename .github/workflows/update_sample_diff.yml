@@ -16,7 +16,7 @@ jobs:
           java-version: 17
       - name: Remove Unused Resouces
         run: |
-          ./gradlew :sample:lintDebug :sample:removeUnusedResources -Prur.lint.onlyUnusedResources -Prur.lint.disableLintConfig -Prur.lintVariant="debug"
+          ./gradlew :sample:lintDebug :sample:removeUnusedResourcesDebug -Prur.lint.onlyUnusedResources -Prur.lint.disableLintConfig
       - name: commit sample.diff
         shell: bash +e {0}
         run: |
