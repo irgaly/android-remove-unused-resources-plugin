@@ -18,7 +18,7 @@ jobs:
       - name: Remove Unused Resources
         run: |
           ./gradlew :sample:lintDebug -Prur.lint.onlyUnusedResources -Prur.lint.overrideLintConfig="./lint.empty.xml"
-          ./gradlew :sample:removeUnusedResources -Prur.lintVariant="debug"
+          ./gradlew :sample:removeUnusedResourcesDebug
       - name: Compare diff
         id: compare
         shell: bash +e {0}
