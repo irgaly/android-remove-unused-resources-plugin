@@ -28,7 +28,6 @@ android {
 
 removeUnusedResources {
     //dryRun = true
-    lintVariant = "debug"
     //lintResultXml = file("${buildDir}/reports/lint-results-debug.xml")
     excludeIds("R.color.unused_exclude_color")
     excludeIdPatterns("R\\..*exclude_pattern.*")
