@@ -10,6 +10,10 @@ import java.io.File
 
 class RemoveUnusedResourcesPlugin : Plugin<Project> {
     override fun apply(target: Project) {
+        val lintVariantOption = target.providers.gradleProperty("rur.lintVariant").orNull
+        if (lintVariantOption != null) {
+            error("rur.lintVariant parameter is deprecated. Use removeUnusedResources${lintVariantOption.replaceFirstChar { it.uppercase() }} Task instead.")
+        }
         target.withAndroid { androidComponents ->
             if (androidComponents.pluginVersion < AndroidPluginVersion(7, 1)) {
                 error("please update AGP 7.1.0 or later")
