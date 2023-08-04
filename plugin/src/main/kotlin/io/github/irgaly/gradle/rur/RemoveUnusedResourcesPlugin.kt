@@ -2,6 +2,7 @@ package io.github.irgaly.gradle.rur
 
 import com.android.build.api.AndroidPluginVersion
 import com.android.build.api.variant.AndroidComponentsExtension
+import com.android.build.api.variant.Variant
 import com.android.build.gradle.internal.lint.AndroidLintTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -19,7 +20,7 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
             )
             registerRemoveUnusedResourcesTask(null, extension)
             androidComponents.onVariants { variant ->
-                registerRemoveUnusedResourcesTask(variant.name, extension)
+                registerRemoveUnusedResourcesTask(variant, extension)
             }
             val onlyUnusedResources =
                 providers.gradleProperty("rur.lint.onlyUnusedResources").isPresent
@@ -63,37 +64,40 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
     }
 
     private fun Project.registerRemoveUnusedResourcesTask(
-        taskVariant: String?,
+        variant: Variant?,
         extension: RemoveUnusedResourcesExtension
     ) {
-        tasks.register(
-            "removeUnusedResources${taskVariant?.replaceFirstChar { it.uppercase() } ?: ""}",
-            RemoveUnusedResourcesTask::class.java
-        ) { task ->
-            var lintResultXml = if (taskVariant == null) {
-                providers.gradleProperty("rur.lintResultXml").orNull?.let {
-                    rootProject.file(it)
-                } ?: extension.lintResultXml
-            } else null
-            if (lintResultXml == null) {
-                val variant = taskVariant
-                    ?: providers.gradleProperty("rur.lintVariant").orNull
-                    ?: extension.lintVariant
-                if (variant != null) {
-                    val fileName =
-                        "lint-results${if (variant.isEmpty()) "" else "-$variant"}.xml"
-                    lintResultXml =
-                        checkNotNull(file("${buildDir}/reports/$fileName"))
+        val names = if (variant == null) {
+            listOf(null)
+        } else listOf(variant.name, variant.buildType)
+        names.forEach { variantName ->
+            val taskName =
+                "removeUnusedResources${variantName?.replaceFirstChar { it.uppercase() } ?: ""}"
+            if (tasks.findByName(taskName) == null) {
+                tasks.register(
+                    taskName,
+                    RemoveUnusedResourcesTask::class.java
+                ) { task ->
+                    var lintResultXml = if (variant == null) {
+                        providers.gradleProperty("rur.lintResultXml").orNull?.let {
+                            rootProject.file(it)
+                        } ?: extension.lintResultXml
+                    } else null
+                    if (lintResultXml == null) {
+                        val fileName =
+                            "lint-results${if (variantName != null) "-$variantName" else ""}.xml"
+                        lintResultXml = checkNotNull(file("${buildDir}/reports/$fileName"))
+                    }
+                    val dryRun = providers.gradleProperty("rur.dryRun").isPresent
+                    task.apply {
+                        this.dryRun.set(dryRun || (extension.dryRun ?: false))
+                        this.lintResultXml.set(lintResultXml)
+                        excludeIds.set(extension.excludeIds)
+                        excludeIdPatterns.set(extension.excludeIdPatterns)
+                        excludeFilePatterns.set(extension.excludeFilePatterns)
+                        mustRunAfter(tasks.withType(AndroidLintTask::class.java))
+                    }
                 }
-            }
-            val dryRun = providers.gradleProperty("rur.dryRun").isPresent
-            task.apply {
-                this.dryRun.set(dryRun || (extension.dryRun ?: false))
-                this.lintResultXml.set(lintResultXml)
-                excludeIds.set(extension.excludeIds)
-                excludeIdPatterns.set(extension.excludeIdPatterns)
-                excludeFilePatterns.set(extension.excludeFilePatterns)
-                mustRunAfter(tasks.withType(AndroidLintTask::class.java))
             }
         }
     }
