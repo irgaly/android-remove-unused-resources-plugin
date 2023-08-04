@@ -19,6 +19,7 @@ import javax.xml.namespace.QName
 import javax.xml.parsers.DocumentBuilderFactory
 
 abstract class RemoveUnusedResourcesTask : DefaultTask() {
+    @get:Optional
     @get:Input
     abstract val dryRun: Property<Boolean>
 
@@ -41,7 +42,7 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
     @Suppress("LABEL_NAME_CLASH") // for using: return@forEach
     @TaskAction
     fun run() {
-        val isDryRun = dryRun.get()
+        val isDryRun = dryRun.getOrElse(false)
         val dryRunMarker = if (isDryRun) "[dry run] " else ""
         var lintResultFile = lintResultXml.orNull?.asFile
             ?: error("Could not determine lintResultXml file. You should set a lintVariant option or lintResultXml option directly")
