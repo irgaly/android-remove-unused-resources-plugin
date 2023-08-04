@@ -28,26 +28,11 @@ This is useful for CI because that is provided by gradle task.
 
 # Requires
 
-* Gradle 7.0.2 ~ with JVM 17 environment
+* Gradle 7.0.2 ~
+  * with JVM 17 environment
 * Android Gradle Plugin 7.1.0 ~
 
 # Usage
-
-Add pluginManagement repository settings.
-
-`settings.gradle.kts`
-
-```kotlin
-// ...
-pluginManagement {
-  repositories {
-    google()
-    mavenCentral()
-    gradlePluginPortal()
-  }
-}
-// ...
-```
 
 Apply the plugin to your app module.
 
@@ -101,20 +86,21 @@ Run Android Lint, that contains `UnusedResources` analyser.
 ```
 
 Run clean up task, then unused resources are deleted.
+There are `removeUnusedResources{variant}` tasks.
 
 ```shell
-% ./gradlew :app:removeUnusedResources -Prur.lintVariant="debug"
+% ./gradlew :app:removeUnusedResourcesDebug
 ```
 
 console outputs like:
 
 ```shell
-> Task :app:removeUnusedResources
-delete resource file: /src/app/src/main/res/drawable/usused_drawable.xml
-delete resource element: R.color.usused_color in /src/app/src/main/res/values/colors.xml
-delete resource element: R.color.usused_color_with_night_theme in /src/app/src/main/res/values-night/colors.xml
-delete resource file because of empty: /src/app/src/main/res/values-night/colors.xml
-delete resource element: R.color.usused_color_with_night_theme in /src/app/src/main/res/values/colors.xml
+> Task :app:removeUnusedResourcesDebug
+> report from: .../app/src/main/res/values/colors.xml
+delete resource element: R.color.black
+delete resource element: R.color.unused_color
+delete resource element: R.color.unused_color_with_night_theme
+...
 ```
 
 modified XML exmaple:
@@ -134,7 +120,7 @@ Only modifies unused resource tag, preserve others (XML indent, spaces, special 
      <string name="character_reference">© = &#169;</string>
 ```
 
-## Run lint only for `UnusedResources`
+## Run lint only for `UnusedResources` rule
 
 This plugin provides simple utility for lint, that overrides lint options.
 
@@ -173,19 +159,18 @@ The details of lint.xml format
 is [here](https://googlesamples.github.io/android-custom-lint-rules/user-guide.html#configuringusinglint.xmlfiles/samplelint.xmlfile)
 .
 
-## Recommended CI usage with one liner
+## CI usage example
 
-This is recommended one liner for CI.
+This is an example for CI usage.
 
 ```shell
 % ./gradlew :app:lintDebug -Prur.lint.onlyUnusedResources
-% ./gradlew :app:removeUnusedResources -Prur.lintVariant="debug"
+% ./gradlew :app:removeUnusedResourcesDebug
 ```
 
 This executes:
 
-* Run Android Lint with `checkOnly("UnusedResources")` and ignoring lint.xml config.
-  * Disabling lint.xml is recommended, because lint.xml settings conflicts checkOnly option.
+* Run Android Lint with `checkOnly("UnusedResources")`.
   * Report will be saved to `app/build/reports/lint-results-debug.xml`.
 * Clean up unused resources by lint result (`app/build/reports/lint-results-debug.xml`)
 
@@ -199,19 +184,19 @@ See [Gradle configuration syntax](#gradle-configuration-syntax) section.
 
 Gradle tasks:
 
-| task | description |
-| --- | --- |
-| removeUnusedResources | delete unused resources |
+| task                           | description                                                                |
+|--------------------------------|----------------------------------------------------------------------------|
+| removeUnusedResources{variant} | delete unused resources by `{buildDir}/reports/lint-results-{variant}.xml` |
+| removeUnusedResources          | delete unused resources by `{buildDir}/reports/lint-results.xml`           |
 
 Gradle properties:
 
-| property                     | description                                                                                                                                                                                          | example                                                                                                 |
-|------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
-| rur.dryRun                   | only output result, without deletion                                                                                                                                                                 | `./gradlew :app:removeUnusedResouces -Prur.dryRun`                                                      |
-| rur.lintVariant              | the variant for lint result xml path. if lintResultXml is set, lintVariant is ignored. use `{buildDir}/reports/lint-results-{default variant}.xml` if no variant is specified in AGP 7.0.0 or upper. | `./gradlew :app:removeUnusedResources -Prur.lintVariant=debug`                                          |
-| rur.lintResultXml            | the lint result xml path from rootProject (or full absolute path)                                                                                                                                    | `./gradlew :app:removeUnusedResources -Prur.lintResultXml="./app/build/reports/lint-results-debug.xml"` |
-| rur.lint.onlyUnusedResources | override lint option for checkOnly UnusedResources                                                                                                                                                   | `./gradlew :app:lintDebug -Prur.lint.onlyUnusedResources`                                               |
-| rur.lint.overrideLintConfig  | override lint.lintConfig. the path is relative path from rootProject (or full absolute path)                                                                                                         | `./gradlew :app:lintDebug -Prur.lint.overrideLintConfig="./lint.unusedresources.xml"`                   |
+| property                     | description                                                                                  | example                                                                                                 |
+|------------------------------|----------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
+| rur.dryRun                   | only output result, without deletion                                                         | `./gradlew :app:removeUnusedResources -Prur.dryRun`                                                     |
+| rur.lintResultXml            | the lint result xml path from rootProject (or full absolute path)                            | `./gradlew :app:removeUnusedResources -Prur.lintResultXml="./app/build/reports/lint-results-debug.xml"` |
+| rur.lint.onlyUnusedResources | override lint option for checkOnly UnusedResources                                           | `./gradlew :app:lintDebug -Prur.lint.onlyUnusedResources`                                               |
+| rur.lint.overrideLintConfig  | override lint.lintConfig. the path is relative path from rootProject (or full absolute path) | `./gradlew :app:lintDebug -Prur.lint.overrideLintConfig="./lint.unusedresources.xml"`                   |
 
 # Gradle configuration syntax
 
@@ -225,13 +210,9 @@ removeUnusedResources {
   // default: false
   dryRun = true
 
-  // specify lint target variant for result xml file detection
-  // if lintResultXml is set, lintVariant is ignored.
-  // default: not specified (use {buildDir}/reports/lint-results-{default variant}.xml) in AGP 7.0.0 or upper
-  lintVariant = "debug"
-
   // specify lint result xml directly
-  // default: not specified (use {buildDir}/reports/lint-results-{default variant}.xml) in AGP 7.0.0 or upper
+  // this option is only for `removeUnusedResources` task, it's ignored by `removeUnusedResources{variant}` task.
+  // default: {buildDir}/reports/lint-results.xml)
   lintResultXml = file("$buildDir/reports/lint-results-debug.xml")
 
   // exclude resource Id list. match rule: entire match
@@ -246,38 +227,51 @@ removeUnusedResources {
 }
 ```
 
-The details of glob pattern is documented in [JDK FileSystem#getPathMatcher]( https://docs.oracle.com/javase/8/docs/api/java/nio/file/FileSystem.html#getPathMatcher-java.lang.String-)
+The details of glob pattern is documented
+in [JDK FileSystem#getPathMatcher]( https://docs.oracle.com/javase/8/docs/api/java/nio/file/FileSystem.html#getPathMatcher-java.lang.String-)
 
-# Other behaviors
+# Note: Other behaviors
 
 * This plugin does not remove the resources that is **outside of rootProject directory**.
   * Those resources are reported in error message.
 
 # Troubleshoots
 
-## `Could not find com.android.tools.build:gradle:{version}`
+## No matching variant of io.github.irgaly.remove-unused-resources:plugin:... was found.
 
-This error occurs without pluginManagement > repository settings in settings.gradle.kts.
-
-See [Usage](#usage) section, and add pluginManagement settings.
+This error is occurred with running Gradle on JVM 11.
+Running Gradle on JVM 17 will solve this error.
 
 ```shell
-org.gradle.api.internal.artifacts.ivyservice.DefaultLenientConfiguration$ArtifactResolveException: Could not resolve all files for configuration ':app:classpath'.
-# ...
-Caused by: org.gradle.internal.resolve.ModuleVersionNotFoundException: Could not find com.android.tools.build:gradle:7.0.4.
-Searched in the following locations:
-  - https://plugins.gradle.org/m2/com/android/tools/build/gradle/7.0.4/gradle-7.0.4.pom
-If the artifact you are trying to retrieve can be found in the repository but without metadata in 'Maven POM' format, you need to adjust the 'metadataSources { ... }' of the repository declaration.
-Required by:
-    project :app > io.github.irgaly.remove-unused-resources:io.github.irgaly.remove-unused-resources.gradle.plugin:0.9.1 > io.github.irgaly:plugin:0.9.1
+...
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+A problem occurred configuring project ':sample'.
+> Could not resolve all files for configuration ':sample:classpath'.
+   > Could not resolve io.github.irgaly.remove-unused-resources:plugin:1.4.1.
+     Required by:
+         project :sample > io.github.irgaly.remove-unused-resources:io.github.irgaly.remove-unused-resources.gradle.plugin:1.4.1
+      > No matching variant of io.github.irgaly.remove-unused-resources:plugin:1.4.1 was found. The consumer was configured to find a runtime of a library compatible with Java 11, packaged as a jar, and its dependencies declared externally, as well as attribute 'org.gradle.plugin.api-version' with value '7.4' but:
+          - Variant 'apiElements' capability io.github.irgaly.remove-unused-resources:plugin:1.4.1 declares a library, packaged as a jar, and its dependencies declared externally:
+              - Incompatible because this component declares an API of a component compatible with Java 17 and the consumer needed a runtime of a component compatible with Java 11
+              - Other compatible attribute:
+                  - Doesn't say anything about org.gradle.plugin.api-version (required '7.4')
+          - Variant 'javadocElements' capability io.github.irgaly.remove-unused-resources:plugin:1.4.1 declares a runtime of a component, and its dependencies declared externally:
+              - Incompatible because this component declares documentation and the consumer needed a library
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java version (required compatibility with Java 11)
+                  - Doesn't say anything about its elements (required them packaged as a jar)
+                  - Doesn't say anything about org.gradle.plugin.api-version (required '7.4')
+          - Variant 'runtimeElements' capability io.github.irgaly.remove-unused-resources:plugin:1.4.1 declares a runtime of a library, packaged as a jar, and its dependencies declared externally:
+              - Incompatible because this component declares a component compatible with Java 17 and the consumer needed a component compatible with Java 11
+              - Other compatible attribute:
+                  - Doesn't say anything about org.gradle.plugin.api-version (required '7.4')
+          - Variant 'sourcesElements' capability io.github.irgaly.remove-unused-resources:plugin:1.4.1 declares a runtime of a component, and its dependencies declared externally:
+              - Incompatible because this component declares documentation and the consumer needed a library
+              - Other compatible attributes:
+                  - Doesn't say anything about its target Java version (required compatibility with Java 11)
+                  - Doesn't say anything about its elements (required them packaged as a jar)
+                  - Doesn't say anything about org.gradle.plugin.api-version (required '7.4')
+...
 ```
-
-# Known Issues
-
-* Android Lint Bug (not this plugin's bug)
-  * When project is multi module project with `android.nonTransitiveRClass=true`, and two module has
-    same resource ID, Android Lint can't find out that resource is not used.
-    * I'm find out this behavior with AGP 7.0.1.
-    * example: moduleA has R.drawable.image (this is used) and moduleB has R.drawable.image (this is
-      not used), Android Lint is not report moduleB's R.drawable.image
-      * related IssueTracker? https://issuetracker.google.com/issues/188871862
