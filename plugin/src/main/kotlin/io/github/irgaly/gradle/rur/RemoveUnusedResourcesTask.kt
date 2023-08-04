@@ -12,12 +12,16 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputFile
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 import java.io.File
 import java.io.StringWriter
 import java.nio.file.FileSystems
 import javax.xml.namespace.QName
 import javax.xml.parsers.DocumentBuilderFactory
 
+@DisableCachingByDefault(
+    because = "RemoveUnusedResourcesTask has File system operation."
+)
 abstract class RemoveUnusedResourcesTask : DefaultTask() {
     @get:Optional
     @get:Input
@@ -174,9 +178,11 @@ abstract class RemoveUnusedResourcesTask : DefaultTask() {
                         issue in skipped -> {
                             logger.lifecycle("skip because it has tools:override: ${issue.resourceName}")
                         }
+
                         issue in removed -> {
                             logger.lifecycle("${dryRunMarker}delete resource element: ${issue.resourceName}")
                         }
+
                         (issue.originalTargetFile == targetFile) -> {
                             logger.warn("resource not found: ${issue.resourceName}")
                         }
