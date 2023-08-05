@@ -6,7 +6,6 @@ import com.android.build.api.variant.Variant
 import com.android.build.gradle.internal.lint.AndroidLintTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import java.io.File
 
 class RemoveUnusedResourcesPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -50,10 +49,11 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
                                 if (disableLintConfig) {
                                     logger.warn("-Prur.lint.disableLintConfig option is deprecated. Use -Prur.lint.overrideLintConfig instead.")
                                     lintConfig =
-                                        File("${rootProject.projectDir}/_dummy_remove_unused_resources.xml")
+                                        rootProject.layout.projectDirectory.file("_dummy_remove_unused_resources.xml").asFile
                                 }
                                 if (overrideLintConfig != null) {
-                                    val file = rootProject.file(overrideLintConfig)
+                                    val file =
+                                        rootProject.layout.projectDirectory.file(overrideLintConfig).asFile
                                     if (!file.exists()) {
                                         error("overrideLintConfig file is not exit: $file")
                                     }
@@ -83,18 +83,22 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
                     RemoveUnusedResourcesTask::class.java
                 ) { task ->
                     var lintResultXml = if (variant == null) {
-                        providers.gradleProperty("rur.lintResultXml").orNull?.let {
-                            rootProject.file(it)
+                        providers.gradleProperty("rur.lintResultXml").map {
+                            rootProject.layout.projectDirectory.file(it)
                         } ?: extension.lintResultXml
                     } else null
                     if (lintResultXml == null) {
                         val targetVariant = variantName ?: getDefaultVariant()
                         val fileName = "lint-results-$targetVariant.xml"
-                        lintResultXml = checkNotNull(file("${buildDir}/reports/$fileName"))
+                        lintResultXml =
+                            checkNotNull(layout.buildDirectory.file("reports/$fileName"))
                     }
-                    val dryRun = providers.gradleProperty("rur.dryRun").isPresent
                     task.apply {
-                        this.dryRun.set(dryRun || (extension.dryRun ?: false))
+                        this.dryRun.set(
+                            providers.gradleProperty("rur.dryRun")
+                                .map { true }
+                                .orElse(extension.dryRun)
+                        )
                         this.lintResultXml.set(lintResultXml)
                         excludeIds.set(extension.excludeIds)
                         excludeIdPatterns.set(extension.excludeIdPatterns)
