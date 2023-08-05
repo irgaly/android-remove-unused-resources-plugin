@@ -184,19 +184,19 @@ See [Gradle configuration syntax](#gradle-configuration-syntax) section.
 
 Gradle tasks:
 
-| task                           | description                                                                |
-|--------------------------------|----------------------------------------------------------------------------|
-| removeUnusedResources{variant} | delete unused resources by `{buildDir}/reports/lint-results-{variant}.xml` |
-| removeUnusedResources          | delete unused resources by `{buildDir}/reports/lint-results.xml`           |
+| task                           | description                                                                        |
+|--------------------------------|------------------------------------------------------------------------------------|
+| removeUnusedResources{variant} | delete unused resources by `{buildDir}/reports/lint-results-{variant}.xml`         |
+| removeUnusedResources          | delete unused resources by `{buildDir}/reports/lint-results-{default variant}.xml` |
 
 Gradle properties:
 
-| property                     | description                                                                                  | example                                                                                                 |
-|------------------------------|----------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
-| rur.dryRun                   | only output result, without deletion                                                         | `./gradlew :app:removeUnusedResources -Prur.dryRun`                                                     |
-| rur.lintResultXml            | the lint result xml path from rootProject (or full absolute path)                            | `./gradlew :app:removeUnusedResources -Prur.lintResultXml="./app/build/reports/lint-results-debug.xml"` |
-| rur.lint.onlyUnusedResources | override lint option for checkOnly UnusedResources                                           | `./gradlew :app:lintDebug -Prur.lint.onlyUnusedResources`                                               |
-| rur.lint.overrideLintConfig  | override lint.lintConfig. the path is relative path from rootProject (or full absolute path) | `./gradlew :app:lintDebug -Prur.lint.overrideLintConfig="./lint.unusedresources.xml"`                   |
+| property                     | description                                                                                                                                                                      | example                                                                                                 |
+|------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|
+| rur.dryRun                   | only output result, without deletion                                                                                                                                             | `./gradlew :app:removeUnusedResourcesDebug -Prur.dryRun`                                                |
+| rur.lintResultXml            | the lint result xml path from rootProject (or full absolute path).  this option is only for `removeUnusedResources` task, it's ignored by `removeUnusedResources{variant}` task. | `./gradlew :app:removeUnusedResources -Prur.lintResultXml="./app/build/reports/lint-results-debug.xml"` |
+| rur.lint.onlyUnusedResources | override lint option for checkOnly UnusedResources                                                                                                                               | `./gradlew :app:lintDebug -Prur.lint.onlyUnusedResources`                                               |
+| rur.lint.overrideLintConfig  | override lint.lintConfig. the path is relative path from rootProject (or full absolute path)                                                                                     | `./gradlew :app:lintDebug -Prur.lint.overrideLintConfig="./lint.unusedresources.xml"`                   |
 
 # Gradle configuration syntax
 
@@ -212,7 +212,7 @@ removeUnusedResources {
 
   // specify lint result xml directly
   // this option is only for `removeUnusedResources` task, it's ignored by `removeUnusedResources{variant}` task.
-  // default: {buildDir}/reports/lint-results.xml)
+  // default: {buildDir}/reports/lint-results-{default variant}.xml)
   lintResultXml = file("$buildDir/reports/lint-results-debug.xml")
 
   // exclude resource Id list. match rule: entire match
