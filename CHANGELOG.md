@@ -19,6 +19,8 @@ This version has breaking changes.
 * Register task as
   removeUnusedResources{variant} [#104](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/104)
   * `-Prur.lintVariant` and `lintVariant` options are removed.
+* use default variant for removeUnusedResources
+  task [#109](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/109)
 * Migrate AGP 7.1
   APIs [#100](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/97)
   * lintOptions -> lint migration in this plugin.
@@ -37,6 +39,8 @@ This version has breaking changes.
   v8.2 [#96](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/96)
 * Gradle Plugin: jvmToolchain 11 +
   foojay-resolver [#92](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/92)
+* CI: update_sample_diff.yml: update
+  command [#110](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/110)
 
 # v1.4.1 - 2023/05/9 JST
 
