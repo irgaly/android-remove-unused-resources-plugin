@@ -10,6 +10,12 @@
         "patch"
       ],
       "enabled": false
+    },
+    {
+      "matchPackageNames": [
+        "io.github.irgaly.remove-unused-resources:io.github.irgaly.remove-unused-resources.gradle.plugin"
+      ],
+      "enabled": false
     }
   ]
 }
