@@ -88,8 +88,8 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
                         } ?: extension.lintResultXml
                     } else null
                     if (lintResultXml == null) {
-                        val fileName =
-                            "lint-results${if (variantName != null) "-$variantName" else ""}.xml"
+                        val targetVariant = variantName ?: getDefaultVariant()
+                        val fileName = "lint-results-$targetVariant.xml"
                         lintResultXml = checkNotNull(file("${buildDir}/reports/$fileName"))
                     }
                     val dryRun = providers.gradleProperty("rur.dryRun").isPresent
@@ -127,5 +127,23 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
                 }
             )
         }
+    }
+
+    /**
+     * get default variant from "lint" task's dependencies.
+     * ex) "lintDebug" Task
+     */
+    private fun Project.getDefaultVariant(): String {
+        val variant = tasks.findByName("lint")?.let { lintTask ->
+            val depends =
+                lintTask.dependsOn.filterIsInstance<String>().filter { it.startsWith("lint") }
+            if (depends.size == 1) {
+                // lint task depends default variant lint task, named "lint{variant}"
+                Regex("^lint(.+)$").matchEntire(depends.first())?.groupValues?.get(1)
+                    ?.replaceFirstChar { it.lowercase() }
+            } else null
+        }
+        checkNotNull(variant) { "no default variant found" }
+        return variant
     }
 }
