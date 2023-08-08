@@ -216,14 +216,14 @@ removeUnusedResources {
   lintResultXml = file("$buildDir/reports/lint-results-debug.xml")
 
   // exclude resource Id list. match rule: entire match
-  excludeIds("R.color.unused_exclude_color")
+  excludeIds.add("R.color.unused_exclude_color")
 
   // regular expression exclude resource Id list. match rule: regular expression entire match
-  excludeIdPatterns("R\\..*exclude_pattern.*")
+  excludeIdPatterns.add("R\\..*exclude_pattern.*")
 
   // glob expression exclude file.
   // file path is relative path from Project's root directory
-  excludeFilePatterns("**/values/exclude_colors.xml")
+  excludeFilePatterns.add("**/values/exclude_colors.xml")
 }
 ```
 
