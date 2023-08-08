@@ -170,7 +170,7 @@ This is an example for CI usage.
 
 This executes:
 
-* Run Android Lint with `checkOnly("UnusedResources")`.
+* Run Android Lint with `checkOnly.add("UnusedResources")`.
   * Report will be saved to `app/build/reports/lint-results-debug.xml`.
 * Clean up unused resources by lint result (`app/build/reports/lint-results-debug.xml`)
 
