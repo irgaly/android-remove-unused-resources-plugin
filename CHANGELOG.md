@@ -1,3 +1,10 @@
+# v2.1.0 - 2023/08/08 JST
+
+* Changes
+  * Support Gradle Lazy
+    Configuration [#112](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/112)
+    * excludeIds, excludeIdPatterns, excludeFilePatterns option uses Property syntax now.
+
 # v2.0.0 - 2023/08/05 JST
 
 This version has breaking changes.
