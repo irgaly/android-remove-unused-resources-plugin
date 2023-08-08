@@ -28,10 +28,10 @@ android {
 
 removeUnusedResources {
     //dryRun = true
-    //lintResultXml = file("${buildDir}/reports/lint-results-debug.xml")
-    excludeIds("R.color.unused_exclude_color")
-    excludeIdPatterns("R\\..*exclude_pattern.*")
-    excludeFilePatterns("**/values/exclude_colors.xml")
+    //lintResultXml = layout.buildDirectory.file("reports/lint-results-debug.xml")
+    excludeIds.add("R.color.unused_exclude_color")
+    excludeIdPatterns.add("R\\..*exclude_pattern.*")
+    excludeFilePatterns.add("**/values/exclude_colors.xml")
 }
 
 dependencies {

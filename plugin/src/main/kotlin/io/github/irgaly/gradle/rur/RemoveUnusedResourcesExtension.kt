@@ -1,67 +1,42 @@
 package io.github.irgaly.gradle.rur
 
-import java.io.File
+import org.gradle.api.file.RegularFileProperty
+import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.Property
 
-abstract class RemoveUnusedResourcesExtension {
+interface RemoveUnusedResourcesExtension {
     /**
      * Don't execute removing resources, only showing resources to be deleted.
      * default: false
      */
-    var dryRun: Boolean? = null
+    val dryRun: Property<Boolean>
 
     /**
      * Specify a lint result file (lint-results-{variant}.xml)
      * for `removeUnusedResources` task
      *
      * default:
-     * * {buildDir}/reports/lint-results.xml
+     * * {buildDir}/reports/lint-results-{default variant}.xml
      */
-    var lintResultXml: File? = null
+    val lintResultXml: RegularFileProperty
 
     /**
      * Exclude resource Id list.
      * This is an entire string to "R.{resource type}.{resource name}"
      */
-    var excludeIds: List<String> = emptyList()
-        private set
-
-    /**
-     * Exclude resource Id regular expression strings.
-     * This is a regular expression string to "R.{resource type}.{resource name}"
-     */
-    var excludeIdPatterns: List<String> = emptyList()
-        private set
-
-    /**
-     * Exclude resource file glob patterns.
-     * This is glob pattern, the path is relative path from root project's directory.
-     */
-    var excludeFilePatterns: List<String> = emptyList()
-        private set
-
-    /**
-     * Set exclude resource Id list.
-     * This is an entire match string to "R.{resource type}.{resource name}"
-     */
-    fun excludeIds(vararg ids: String) {
-        excludeIds = ids.toList()
-    }
+    val excludeIds: ListProperty<String>
 
     /**
      * Exclude resource Id regular expression strings.
      * This is a regular expression string to "R.{resource type}.{resource name}"
      * match rule: entire match
      */
-    fun excludeIdPatterns(vararg idPatterns: String) {
-        excludeIdPatterns = idPatterns.toList()
-    }
+    val excludeIdPatterns: ListProperty<String>
 
     /**
      * Exclude resource file glob patterns.
      * This is glob pattern, the path is relative path from root project's directory.
      * match rule: entire match
      */
-    fun excludeFilePatterns(vararg filePatterns: String) {
-        excludeFilePatterns = filePatterns.toList()
-    }
+    val excludeFilePatterns: ListProperty<String>
 }
