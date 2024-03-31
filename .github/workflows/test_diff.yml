@@ -28,7 +28,7 @@ jobs:
             echo "diff=$(cat sample.diff.changes | tail -n +3 | sed -z 's/\n/%0A/g')" >> $GITHUB_OUTPUT
             exit 1
           )
-      - uses: peter-evans/find-comment@v2
+      - uses: peter-evans/find-comment@v3
         id: find_comment
         if: failure()
         with:
