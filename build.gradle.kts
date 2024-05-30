@@ -1,4 +1,4 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 
 plugins {
     alias(libs.plugins.kotlin.android) apply false
@@ -7,7 +7,14 @@ plugins {
 }
 
 subprojects {
-    tasks.withType<KotlinCompile> {
-        kotlinOptions.jvmTarget = "11"
+    listOf(
+        "org.jetbrains.kotlin.android",
+        "org.jetbrains.kotlin.multiplatform"
+    ).forEach {
+        pluginManager.withPlugin(it) {
+            extensions.configure<KotlinProjectExtension> {
+                jvmToolchain(11)
+            }
+        }
     }
 }

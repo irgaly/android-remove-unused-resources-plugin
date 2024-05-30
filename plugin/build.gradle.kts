@@ -21,10 +21,6 @@ dependencies {
 group = "io.github.irgaly.remove-unused-resources"
 version = libs.versions.removeunusedresources.get()
 
-kotlin {
-    jvmToolchain(11)
-}
-
 java {
     withSourcesJar()
     withJavadocJar()
