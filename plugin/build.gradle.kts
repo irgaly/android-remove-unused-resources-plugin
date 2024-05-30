@@ -41,14 +41,14 @@ if (providers.environmentVariable("CI").isPresent) {
 }
 
 gradlePlugin {
-    website.set("https://github.com/irgaly/android-remove-unused-resources-plugin")
-    vcsUrl.set("https://github.com/irgaly/android-remove-unused-resources-plugin")
+    website = "https://github.com/irgaly/android-remove-unused-resources-plugin"
+    vcsUrl = "https://github.com/irgaly/android-remove-unused-resources-plugin"
     plugins {
         create("plugin") {
             id = libs.plugins.removeunusedresources.get().pluginId
             displayName = "Remove Unused Resources Plugin for Android"
             description = "A plugin removes unused resources discovered by Android Lint"
-            tags.set(listOf("android"))
+            tags = listOf("android")
             implementationClass = "io.github.irgaly.gradle.rur.RemoveUnusedResourcesPlugin"
         }
     }
