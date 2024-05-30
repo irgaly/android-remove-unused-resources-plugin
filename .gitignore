@@ -1,5 +1,8 @@
 .idea/kotlinc.xml
 
+# Kotlin
+.kotlin
+
 # Created by https://www.toptal.com/developers/gitignore/api/macos,android,windows,androidstudio,intellij
 # Edit at https://www.toptal.com/developers/gitignore?templates=macos,android,windows,androidstudio,intellij
 
