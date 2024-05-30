@@ -1,9 +1,8 @@
 [versions]
 removeunusedresources = "2.1.0"
-kotlin = "1.9.20"
+kotlin = "2.0.0"
 kotest = "5.8.0"
 gradle-android = "8.3.2"
-compose-compiler = "1.5.4"
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle-android" }
@@ -23,6 +22,7 @@ compose = ["compose-activity", "compose-material3", "compose-uiTooling"]
 [plugins]
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-application = { id = "com.android.application", version.ref = "gradle-android" }
 android-library = { id = "com.android.library", version.ref = "gradle-android" }
 publish = { id = "com.gradle.plugin-publish", version = "1.2.0" }
