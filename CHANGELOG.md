@@ -1,3 +1,8 @@
+# v2.2.0 - 2024/05/30 JST
+
+* Maintenance
+  * Kotlin 2.0.0 [#133](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/133)
+
 # v2.1.0 - 2023/08/08 JST
 
 * Changes
