@@ -1,12 +1,12 @@
 {
   "extends": [
-    "config:base",
+    "config:recommended",
     ":timezone(Asia/Tokyo)",
     "schedule:quarterly"
   ],
   "packageRules": [
     {
-      "updateTypes": [
+      "matchUpdateTypes": [
         "patch"
       ],
       "enabled": false
