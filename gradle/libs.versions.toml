@@ -2,7 +2,7 @@
 removeunusedresources = "2.2.0"
 kotlin = "2.1.10"
 kotest = "5.9.1"
-gradle-android = "8.8.0"
+gradle-android = "8.9.1"
 
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle-android" }
