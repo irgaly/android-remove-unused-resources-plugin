@@ -1,9 +1,15 @@
 package io.github.irgaly.gradle.rur
 
 import com.android.build.api.AndroidPluginVersion
+import com.android.build.api.dsl.CommonExtension
+import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
+import com.android.build.api.dsl.Lint
 import com.android.build.api.variant.AndroidComponentsExtension
+import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.android.build.api.variant.Variant
+import com.android.build.gradle.internal.dsl.ApplicationExtensionImpl
 import com.android.build.gradle.internal.lint.AndroidLintTask
+import com.android.build.gradle.internal.plugins.AppPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -34,8 +40,8 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
             if (hasOverrideLintOptions) {
                 rootProject.allprojects.forEach { project ->
                     project.withAndroid { androidComponents ->
-                        androidComponents.finalizeDsl {
-                            it.lint {
+                        androidComponents.finalizeDsl { dsl ->
+                            fun Lint.configure() {
                                 if (onlyUnusedResources) {
                                     if (project == target) {
                                         xmlReport = true
@@ -58,6 +64,14 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
                                         error("overrideLintConfig file is not exit: $file")
                                     }
                                     lintConfig = file
+                                }
+                            }
+                            when (dsl) {
+                                is CommonExtension<*, *, *, *, *, *> -> dsl.lint {
+                                    configure()
+                                }
+                                is KotlinMultiplatformAndroidLibraryExtension -> dsl.lint {
+                                    configure()
                                 }
                             }
                         }
@@ -126,6 +140,15 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
             action(
                 checkNotNull(
                     extensions.findByType(AndroidComponentsExtension::class.java)
+                ) {
+                    error("please update AGP 7.1.0 or later")
+                }
+            )
+        }
+        pluginManager.withPlugin("com.android.kotlin.multiplatform.library") {
+            action(
+                checkNotNull(
+                    extensions.getByType(AndroidComponentsExtension::class.java)
                 ) {
                     error("please update AGP 7.1.0 or later")
                 }
