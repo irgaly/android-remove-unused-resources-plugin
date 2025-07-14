@@ -1,4 +1,7 @@
-.idea/kotlinc.xml
+.idea/*
+!.idea/codeStyles
+!.idea/dictionaries
+!.idea/externalDependencies.xml
 
 # Kotlin
 .kotlin
