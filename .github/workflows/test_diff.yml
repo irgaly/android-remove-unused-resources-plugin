@@ -25,7 +25,11 @@ jobs:
         run: |
           git diff --unified=0 | sed "/^index .*$/d" > sample.diff.new
           diff -u sample.diff sample.diff.new > sample.diff.changes || (
-            echo "diff=$(cat sample.diff.changes | tail -n +3 | sed -z 's/\n/%0A/g')" >> $GITHUB_OUTPUT
+            {
+              echo "diff<<EOF"
+              cat sample.diff.changes | tail -n +3
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
             exit 1
           )
       - uses: peter-evans/find-comment@v3
