@@ -1,5 +1,5 @@
 [versions]
-removeunusedresources = "2.2.0"
+removeunusedresources = "2.3.0"
 kotlin = "2.2.0"
 kotest = "5.9.1"
 gradle-android = "8.11.1"
