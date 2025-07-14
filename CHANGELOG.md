@@ -1,3 +1,10 @@
+# v2.3.0 - 2024/07/14 JST
+
+* Maintenance
+  * Kotlin 2.2.0 [#160](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/160)
+  * Support AGP 8.10 ~ 8.11 [#166](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/166)
+    * Support Android KMP Library module
+ 
 # v2.2.0 - 2024/05/30 JST
 
 * Maintenance
