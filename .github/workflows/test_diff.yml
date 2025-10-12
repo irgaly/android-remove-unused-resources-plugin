@@ -10,8 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     if: ${{ !github.event.pull_request.draft }}
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-java@v5
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - uses: actions/setup-java@dded0888837ed1f317902acf8a20df0ad188d165 # v5
         with:
           distribution: temurin
           java-version: 17
@@ -32,13 +32,13 @@ jobs:
             } >> "$GITHUB_OUTPUT"
             exit 1
           )
-      - uses: peter-evans/find-comment@v4
+      - uses: peter-evans/find-comment@b30e6a3c0ed37e7c023ccd3f1db5c6c0b0c23aad # v4.0.0
         id: find_comment
         if: failure()
         with:
           issue-number: ${{ github.event.pull_request.number }}
           body-includes: "Diff changed:"
-      - uses: peter-evans/create-or-update-comment@v5
+      - uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
         if: failure()
         with:
           body: |
