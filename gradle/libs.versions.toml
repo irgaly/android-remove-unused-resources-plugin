@@ -7,7 +7,7 @@ gradle-android = "8.13.0"
 [libraries]
 android-gradle = { module = "com.android.tools.build:gradle", version.ref = "gradle-android" }
 androidx-appcompat = { module = "androidx.appcompat:appcompat", version = "1.7.0" }
-androidx-lifecycle = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version = "2.9.1" }
+androidx-lifecycle = { module = "androidx.lifecycle:lifecycle-runtime-ktx", version = "2.10.0" }
 compose-bom = { group = "androidx.compose", name = "compose-bom", version = "2025.10.00" }
 compose-activity = { module = "androidx.activity:activity-compose", version = "1.11.0" }
 compose-material3 = { module = "androidx.compose.material3:material3" }
