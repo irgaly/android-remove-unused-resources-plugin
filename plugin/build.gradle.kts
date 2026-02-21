@@ -24,6 +24,9 @@ version = libs.versions.removeunusedresources.get()
 java {
     withSourcesJar()
     withJavadocJar()
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
 }
 
 if (providers.environmentVariable("CI").isPresent) {
