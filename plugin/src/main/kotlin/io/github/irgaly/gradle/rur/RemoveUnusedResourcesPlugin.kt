@@ -5,13 +5,11 @@ import com.android.build.api.dsl.CommonExtension
 import com.android.build.api.dsl.KotlinMultiplatformAndroidLibraryExtension
 import com.android.build.api.dsl.Lint
 import com.android.build.api.variant.AndroidComponentsExtension
-import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.android.build.api.variant.Variant
-import com.android.build.gradle.internal.dsl.ApplicationExtensionImpl
 import com.android.build.gradle.internal.lint.AndroidLintTask
-import com.android.build.gradle.internal.plugins.AppPlugin
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import kotlin.reflect.safeCast
 
 class RemoveUnusedResourcesPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -66,11 +64,13 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
                                     lintConfig = file
                                 }
                             }
-                            when (dsl) {
-                                is CommonExtension<*, *, *, *, *, *> -> dsl.lint {
+                            val commonExtension = CommonExtension::class.safeCast(dsl)
+                            when {
+                                commonExtension != null -> commonExtension.lint.apply {
                                     configure()
                                 }
-                                is KotlinMultiplatformAndroidLibraryExtension -> dsl.lint {
+
+                                dsl is KotlinMultiplatformAndroidLibraryExtension -> dsl.lint {
                                     configure()
                                 }
                             }
@@ -99,7 +99,7 @@ class RemoveUnusedResourcesPlugin : Plugin<Project> {
                     var lintResultXml = if (variant == null) {
                         providers.gradleProperty("rur.lintResultXml").map {
                             rootProject.layout.projectDirectory.file(it)
-                        } ?: extension.lintResultXml
+                        }.orElse(extension.lintResultXml)
                     } else null
                     if (lintResultXml == null) {
                         val targetVariant = variantName ?: getDefaultVariant()
