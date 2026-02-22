@@ -1,3 +1,8 @@
+# v2.4.0 - 2026/02/23 JST
+
+* Maintenance
+  * Support AGP 9 (Gradle 8.3~, AGP 8.2.0~, JDK 11~) [#192](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/192)
+
 # v2.3.0 - 2024/07/14 JST
 
 * Maintenance
