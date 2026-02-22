@@ -28,9 +28,9 @@ This is useful for CI because that is provided by gradle task.
 
 # Requires
 
-* Gradle 7.0.2 ~
-  * with JVM 17 environment
-* Android Gradle Plugin 7.1.0 ~
+* Gradle 8.3 ~
+  * with JVM 11 ~ environment
+* Android Gradle Plugin 8.2.0 ~
 
 # Usage
 
