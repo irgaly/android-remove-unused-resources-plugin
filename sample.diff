@@ -70,6 +70,19 @@ deleted file mode 100644
 diff --git a/sample/src/main/res/drawable/unused_png9patch_alternative.9.png b/sample/src/main/res/drawable/unused_png9patch_alternative.9.png
 deleted file mode 100644
 Binary files a/sample/src/main/res/drawable/unused_png9patch_alternative.9.png and /dev/null differ
+diff --git a/sample/src/main/res/layout/unused_layout.xml b/sample/src/main/res/layout/unused_layout.xml
+deleted file mode 100644
+--- a/sample/src/main/res/layout/unused_layout.xml
++++ /dev/null
+@@ -1,7 +0,0 @@
+-<?xml version="1.0" encoding="utf-8"?>
+-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+-    android:layout_width="match_parent"
+-    android:layout_height="match_parent"
+-    android:orientation="horizontal">
+-
+-</LinearLayout>
+\ No newline at end of file
 diff --git a/sample/src/main/res/values-night/colors.xml b/sample/src/main/res/values-night/colors.xml
 deleted file mode 100644
 --- a/sample/src/main/res/values-night/colors.xml
