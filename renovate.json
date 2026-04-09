@@ -12,6 +12,17 @@
       "enabled": false
     },
     {
+      "groupName": "Kotlin",
+      "matchPackageNames": [
+        "org.jetbrains.kotlin:*",
+        "org.jetbrains.kotlin.*"
+      ],
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "enabled": true
+    },
+    {
       "matchPackageNames": [
         "io.github.irgaly.remove-unused-resources:io.github.irgaly.remove-unused-resources.gradle.plugin"
       ],
