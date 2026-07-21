@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace = "org.sample.app.sample.sub"
-    compileSdk = 36
+    compileSdk = 37
     defaultConfig {
         minSdk = 26
     }
