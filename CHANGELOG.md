@@ -1,3 +1,11 @@
+# v2.5.0 - 2026/07/21 JST
+
+* Maintenance
+  * jvmToolchain
+    17 [#212](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/212)
+  * fix(deps): update gradle.android to v9.3.0, plugin module JDK
+    17 [210](https://github.com/irgaly/android-remove-unused-resources-plugin/pull/210)
+
 # v2.4.0 - 2026/02/23 JST
 
 * Maintenance
