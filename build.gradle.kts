@@ -14,7 +14,7 @@ subprojects {
     ).forEach {
         pluginManager.withPlugin(it) {
             extensions.configure<KotlinProjectExtension> {
-                jvmToolchain(11)
+                jvmToolchain(17)
             }
         }
     }

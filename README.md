@@ -29,7 +29,7 @@ This is useful for CI because that is provided by gradle task.
 # Requires
 
 * Gradle 8.3 ~
-  * with JVM 11 ~ environment
+  * with JVM 17 ~ environment
 * Android Gradle Plugin 8.2.0 ~
 
 # Usage
@@ -234,44 +234,3 @@ in [JDK FileSystem#getPathMatcher]( https://docs.oracle.com/javase/8/docs/api/ja
 
 * This plugin does not remove the resources that is **outside of rootProject directory**.
   * Those resources are reported in error message.
-
-# Troubleshoots
-
-## No matching variant of io.github.irgaly.remove-unused-resources:plugin:... was found.
-
-This error is occurred with running Gradle on JVM 11.
-Running Gradle on JVM 17 will solve this error.
-
-```shell
-...
-FAILURE: Build failed with an exception.
-
-* What went wrong:
-A problem occurred configuring project ':sample'.
-> Could not resolve all files for configuration ':sample:classpath'.
-   > Could not resolve io.github.irgaly.remove-unused-resources:plugin:1.4.1.
-     Required by:
-         project :sample > io.github.irgaly.remove-unused-resources:io.github.irgaly.remove-unused-resources.gradle.plugin:1.4.1
-      > No matching variant of io.github.irgaly.remove-unused-resources:plugin:1.4.1 was found. The consumer was configured to find a runtime of a library compatible with Java 11, packaged as a jar, and its dependencies declared externally, as well as attribute 'org.gradle.plugin.api-version' with value '7.4' but:
-          - Variant 'apiElements' capability io.github.irgaly.remove-unused-resources:plugin:1.4.1 declares a library, packaged as a jar, and its dependencies declared externally:
-              - Incompatible because this component declares an API of a component compatible with Java 17 and the consumer needed a runtime of a component compatible with Java 11
-              - Other compatible attribute:
-                  - Doesn't say anything about org.gradle.plugin.api-version (required '7.4')
-          - Variant 'javadocElements' capability io.github.irgaly.remove-unused-resources:plugin:1.4.1 declares a runtime of a component, and its dependencies declared externally:
-              - Incompatible because this component declares documentation and the consumer needed a library
-              - Other compatible attributes:
-                  - Doesn't say anything about its target Java version (required compatibility with Java 11)
-                  - Doesn't say anything about its elements (required them packaged as a jar)
-                  - Doesn't say anything about org.gradle.plugin.api-version (required '7.4')
-          - Variant 'runtimeElements' capability io.github.irgaly.remove-unused-resources:plugin:1.4.1 declares a runtime of a library, packaged as a jar, and its dependencies declared externally:
-              - Incompatible because this component declares a component compatible with Java 17 and the consumer needed a component compatible with Java 11
-              - Other compatible attribute:
-                  - Doesn't say anything about org.gradle.plugin.api-version (required '7.4')
-          - Variant 'sourcesElements' capability io.github.irgaly.remove-unused-resources:plugin:1.4.1 declares a runtime of a component, and its dependencies declared externally:
-              - Incompatible because this component declares documentation and the consumer needed a library
-              - Other compatible attributes:
-                  - Doesn't say anything about its target Java version (required compatibility with Java 11)
-                  - Doesn't say anything about its elements (required them packaged as a jar)
-                  - Doesn't say anything about org.gradle.plugin.api-version (required '7.4')
-...
-```
