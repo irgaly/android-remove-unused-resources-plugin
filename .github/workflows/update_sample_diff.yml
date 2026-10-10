@@ -13,7 +13,7 @@ jobs:
       - uses: actions/setup-java@b6effb05e454b25005698d916606bdc6ffcbf961 # v5.7.0
         with:
           distribution: temurin
-          java-version: 17
+          java-version: 25
       - name: Remove Unused Resouces
         run: |
           ./gradlew :sample:lintDebug -Prur.lint.onlyUnusedResources -Prur.lint.overrideLintConfig="lint.empty.xml"
